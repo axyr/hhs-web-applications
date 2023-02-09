@@ -1,62 +1,46 @@
-const cards        = [];
-const menuItems    = [];
-const itemsPerPage = 5;
-let currentPage    = 1;
+const cards             = [];
+const menuItems         = [];
+const amountOfCards     = 13;
+const cardsPerPage      = 5;
 
-for (let i = 1; i <= 13; i++) {
-    cards.push({
-        id: i,
-        title: `Book ${i}`,
-        category: 'Category',
-    },);
+let currentPage = 1;
+
+function init() {
+    renderMenuItems();
+    createCards();
+    renderCards();
+    setPageTitle();
 }
 
-const numberOfMenuItems = Math.ceil(cards.length / itemsPerPage);
+function createCards() {
+    for (let i = 1; i <= 13; i++) {
+        const card = {
+            id: i,
+            title: `Book ${i}`,
+            category: 'Category',
+        };
+        cards.push(card);
+    }
+}
 
-for (let i = 1; i <= numberOfMenuItems; i++) {
-    menuItems.push({
-        id: i,
-        title: `Page ${i}`,
-        active: i === currentPage,
+function renderCards() {
+    const targetElement = getClearedElementById('cards');
+
+    const firstItem = (currentPage * cardsPerPage) - cardsPerPage;
+    const lastItem  = firstItem + cardsPerPage;
+
+    cards.slice(firstItem, lastItem).forEach(function (card) {
+        appendCard(targetElement, card);
     });
 }
 
-function addMenuItem(i) {
-    const title     = `Page ${i}`;
-    const className = i === currentPage ? 'active' : '';
-    const template  = `<a href="#" title="View ${title}" data-page="${i}" class="${className}">${title}</a>`;
-    const li        = document.createElement('li');
-    li.innerHTML    = template;
-
-    menuItem.addEventListener('click', setActiveMenuItem);
-    return document.getElementById('main-nav').appendChild(li);
-}
-
-function setActiveMenuItem(e) {
-    currentPage = e.target.getAttribute('data-page');
-    setPage();
-    return false;
-}
-
-function setPage() {
-
-}
-
-menuItems.forEach(function (menuItem) {
-    const className = menuItem.active ? 'active':';'
-    const template  = `<a href="#" title="View ${menuItem.title}" data-page="${menuItem.id}" class="${className}">${menuItem.title}</a>`;
-    const li        = document.createElement('li');
-    li.innerHTML    = template;
-    return document.getElementById('main-nav').appendChild(li);
-});
-
-cards.forEach(function (card) {
+function appendCard(targetElement, card) {
     const template = cardTemplate(card);
     const html     = document.createElement('div');
     html.className = 'card-holder';
     html.innerHTML = template;
-    document.getElementById('cards').appendChild(html);
-});
+    targetElement.appendChild(html);
+}
 
 function cardTemplate(card) {
     return `<div class="card" data-id="${card.id}">
@@ -72,3 +56,48 @@ function cardTemplate(card) {
             </div>
         </div>`;
 }
+
+function renderMenuItems() {
+    const targetElement = getClearedElementById('main-nav');
+    const numberOfMenuItems = Math.ceil(amountOfCards / cardsPerPage);
+
+    for (let i = 1; i <= numberOfMenuItems; i++) {
+        const menuItem = {
+            id: i,
+            title: `Page ${i}`,
+            active: i === currentPage,
+        };
+        menuItems.push(menuItem);
+        const element = appendMenuItem(targetElement, menuItem);
+        element.addEventListener('click', handleMenuClick);
+    }
+}
+
+function appendMenuItem(targetElement, menuItem) {
+    const className = menuItem.active ? 'active' : '';
+    const template  = `<a href="#" title="View ${menuItem.title}" data-page="${menuItem.id}" class="${className}">${menuItem.title}</a>`;
+    const li        = document.createElement('li');
+    li.innerHTML    = template;
+    return targetElement.appendChild(li);
+}
+
+function setPageTitle() {
+    document.getElementsByTagName('title')[0].text = `Page ${currentPage} - Books`;
+}
+
+function handleMenuClick(e) {
+    currentPage = parseInt(e.target.getAttribute('data-page'));
+
+    setPageTitle();
+    renderMenuItems();
+    renderCards();
+}
+
+function getClearedElementById(id) {
+    const element     = document.getElementById(id);
+    element.innerHTML = '';
+
+    return element
+}
+
+init();
