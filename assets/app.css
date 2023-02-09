@@ -42,9 +42,33 @@ nav ul li a {
 }
 
 nav ul li a.active,
-nav ul li a:hover{
+nav ul li a:hover {
     background-color: #f8fafb;
     border-bottom: 2px solid #0083ff;
+}
+
+main {
+    width: 100%;
+    padding: 2rem 0;
+}
+
+#titlebar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 0 2rem 0;
+}
+
+h1 {
+    padding: 0;
+}
+
+select{
+    border:none;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
 }
 
 footer {
@@ -53,15 +77,6 @@ footer {
     padding: 2rem;
     background-color: #666;
     color: #fff;
-}
-
-main {
-    width: 100%;
-    padding: 2rem 0;
-}
-
-h1 {
-    padding: 0 0 2rem 0;
 }
 
 .card {

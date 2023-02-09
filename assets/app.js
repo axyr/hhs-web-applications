@@ -1,15 +1,27 @@
-const cards             = [];
-const menuItems         = [];
-const amountOfCards     = 13;
-const cardsPerPage      = 5;
+const cards         = [];
+const menuItems     = [];
+const amountOfCards = 13;
+const cardsPerPage  = 5;
 
-let currentPage = 1;
+let currentPage   = 1;
+let sortDirection = 'asc';
 
 function init() {
+    setPageTitle();
     renderMenuItems();
     createCards();
     renderCards();
-    setPageTitle();
+
+    document.getElementById('sort').addEventListener('change', setSortDirection);
+}
+
+function setPageTitle() {
+    document.getElementsByTagName('title')[0].text = `Page ${currentPage} - Books`;
+}
+
+function setSortDirection() {
+    sortDirection = document.getElementById('sort').value;
+    renderCards();
 }
 
 function createCards() {
@@ -28,6 +40,12 @@ function renderCards() {
 
     const firstItem = (currentPage * cardsPerPage) - cardsPerPage;
     const lastItem  = firstItem + cardsPerPage;
+
+    if (sortDirection === 'desc') {
+        cards.sort((a, b) => (a.id > b.id) ? -1 : 1);
+    } else {
+        cards.sort((a, b) => (a.id > b.id) ? 1 : -1);
+    }
 
     cards.slice(firstItem, lastItem).forEach(function (card) {
         appendCard(targetElement, card);
@@ -58,7 +76,7 @@ function cardTemplate(card) {
 }
 
 function renderMenuItems() {
-    const targetElement = getClearedElementById('main-nav');
+    const targetElement     = getClearedElementById('main-nav');
     const numberOfMenuItems = Math.ceil(amountOfCards / cardsPerPage);
 
     for (let i = 1; i <= numberOfMenuItems; i++) {
@@ -79,10 +97,6 @@ function appendMenuItem(targetElement, menuItem) {
     const li        = document.createElement('li');
     li.innerHTML    = template;
     return targetElement.appendChild(li);
-}
-
-function setPageTitle() {
-    document.getElementsByTagName('title')[0].text = `Page ${currentPage} - Books`;
 }
 
 function handleMenuClick(e) {
