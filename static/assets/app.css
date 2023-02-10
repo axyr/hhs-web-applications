@@ -46,10 +46,20 @@ header .container {
     justify-content: space-between;
 }
 
-h1 {
+#logo {
     display: inline-block;
-    padding: 1.5rem 0;
+    position: relative;
+    padding: 1rem 0 0.9rem 0;
     cursor: pointer;
+    color: #101827;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+#logo span{
+    position: relative;
+    top:-0.6rem;
+    margin-left: 0.5rem;
 }
 
 main {
@@ -74,11 +84,12 @@ nav ul li {
 
 nav ul li a {
     display: inline-block;
-    padding: 1.5rem;
+    padding: 1.4rem;
     margin: 0;
     text-decoration: none;
     text-transform: uppercase;
     color: #101827;
+    border-top: 2px solid #fff;
     border-bottom: 2px solid #fff;
 }
 

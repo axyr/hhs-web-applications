@@ -17,7 +17,8 @@ function init() {
     renderCategories();
     createCards();
     redraw();
-    document.getElementsByTagName('h1')[0].addEventListener('click', setCurrentPage);
+
+    document.getElementById('logo').addEventListener('click', setCurrentPage);
     document.getElementById('sort').addEventListener('change', handleSortChange);
 }
 
