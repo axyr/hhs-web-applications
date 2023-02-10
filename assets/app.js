@@ -118,21 +118,21 @@ function renderCategories() {
 function appendCategory(targetElement, index, category) {
     const checkbox = checkboxTemplate(index, category);
     const html     = document.createElement('div');
-    html.className = 'checkbox';
+    html.className = 'checkbox shadow rounded bg-white';
     html.innerHTML = checkbox;
     return targetElement.appendChild(html);
 }
 
 function cardTemplate(card) {
     const category = categories[card.categoryId];
-    return `<div class="card" data-id="${card.id}">
-            <img src="https://picsum.photos/150" alt="placeholder">
+    return `<div class="card shadow rounded bg-white" data-id="${card.id}">
+            <img src="https://picsum.photos/300/150" alt="placeholder">
             <div class="content">
-                <span class="number">${card.id}</span>
+                <span class="number bg-gray">${card.id}</span>
                 <div class="content-inner">
                     <h3>${card.title}</h3>
                 </div>
-                <div class="category">
+                <div class="category bg-gray">
                     ${category}
                 </div>
             </div>
