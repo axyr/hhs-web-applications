@@ -17,7 +17,7 @@ function init() {
     renderCategories();
     createCards();
     redraw();
-
+    document.getElementsByTagName('h1')[0].addEventListener('click', setCurrentPage);
     document.getElementById('sort').addEventListener('change', handleSortChange);
 }
 
@@ -26,7 +26,10 @@ function setPageTitle() {
 }
 
 function setCurrentPage(page) {
-    currentPage = parseInt(page);
+    page = parseInt(page);
+
+    currentPage = Number.isNaN(page) ? 1 : page;
+
     redraw();
 }
 
