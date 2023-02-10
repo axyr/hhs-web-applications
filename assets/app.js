@@ -2,37 +2,66 @@ const cards         = [];
 const menuItems     = [];
 const amountOfCards = 13;
 const cardsPerPage  = 5;
+const categories    = [
+    'Category A',
+    'Category B',
+    'Category C',
+];
 
-let currentPage   = 1;
-let sortDirection = 'asc';
+let currentPage        = 1;
+let sortDirection      = 'asc';
+let selectedCategories = [];
+let selectedCards      = [];
 
 function init() {
-    setPageTitle();
-    renderMenuItems();
+    renderCategories();
     createCards();
-    renderCards();
+    redraw();
 
-    document.getElementById('sort').addEventListener('change', setSortDirection);
+    document.getElementById('sort').addEventListener('change', handleSortChange);
 }
 
 function setPageTitle() {
     document.getElementsByTagName('title')[0].text = `Page ${currentPage} - Books`;
 }
 
-function setSortDirection() {
-    sortDirection = document.getElementById('sort').value;
-    renderCards();
+function setCurrentPage(page) {
+    currentPage = parseInt(page);
+    redraw();
+}
+
+function getRandomCategoryId() {
+    return Math.floor(Math.random() * categories.length);
+}
+
+function getClearedElementById(id) {
+    const element     = document.getElementById(id);
+    element.innerHTML = '';
+
+    return element;
 }
 
 function createCards() {
-    for (let i = 1; i <= 13; i++) {
+    for (let i = 1; i <= amountOfCards; i++) {
         const card = {
             id: i,
             title: `Book ${i}`,
-            category: 'Category',
+            categoryId: getRandomCategoryId(),
         };
         cards.push(card);
     }
+}
+
+function selectCards() {
+
+    const low  = sortDirection === 'desc' ? -1 : 1;
+    const high = sortDirection === 'desc' ? 1 : -1;
+
+    selectedCards = cards
+        .filter(card => !selectedCategories.length || typeof selectedCategories[card.categoryId] !== 'undefined')
+        .sort((a, b) => (a.id > b.id) ? low : high);
+
+    renderCards();
 }
 
 function renderCards() {
@@ -41,15 +70,9 @@ function renderCards() {
     const firstItem = (currentPage * cardsPerPage) - cardsPerPage;
     const lastItem  = firstItem + cardsPerPage;
 
-    if (sortDirection === 'desc') {
-        cards.sort((a, b) => (a.id > b.id) ? -1 : 1);
-    } else {
-        cards.sort((a, b) => (a.id > b.id) ? 1 : -1);
-    }
-
-    cards.slice(firstItem, lastItem).forEach(function (card) {
-        appendCard(targetElement, card);
-    });
+    selectedCards
+        .slice(firstItem, lastItem)
+        .forEach(card => appendCard(targetElement, card));
 }
 
 function appendCard(targetElement, card) {
@@ -60,24 +83,9 @@ function appendCard(targetElement, card) {
     targetElement.appendChild(html);
 }
 
-function cardTemplate(card) {
-    return `<div class="card" data-id="${card.id}">
-            <img src="https://picsum.photos/150" alt="placeholder">
-            <div class="content">
-                <span class="number">${card.id}</span>
-                <div class="content-inner">
-                    <h3>${card.title}</h3>
-                </div>
-                <div class="category">
-                    ${card.category}
-                </div>
-            </div>
-        </div>`;
-}
-
 function renderMenuItems() {
     const targetElement     = getClearedElementById('main-nav');
-    const numberOfMenuItems = Math.ceil(amountOfCards / cardsPerPage);
+    const numberOfMenuItems = Math.ceil(selectedCards.length / cardsPerPage);
 
     for (let i = 1; i <= numberOfMenuItems; i++) {
         const menuItem = {
@@ -99,19 +107,73 @@ function appendMenuItem(targetElement, menuItem) {
     return targetElement.appendChild(li);
 }
 
-function handleMenuClick(e) {
-    currentPage = parseInt(e.target.getAttribute('data-page'));
-
-    setPageTitle();
-    renderMenuItems();
-    renderCards();
+function renderCategories() {
+    const targetElement = getClearedElementById('categories');
+    categories.forEach(function (category, index) {
+        const element = appendCategory(targetElement, index, category);
+        element.addEventListener('change', handleCategoryChange);
+    });
 }
 
-function getClearedElementById(id) {
-    const element     = document.getElementById(id);
-    element.innerHTML = '';
+function appendCategory(targetElement, index, category) {
+    const checkbox = checkboxTemplate(index, category);
+    const html     = document.createElement('div');
+    html.className = 'checkbox';
+    html.innerHTML = checkbox;
+    return targetElement.appendChild(html);
+}
 
-    return element
+function cardTemplate(card) {
+    const category = categories[card.categoryId];
+    return `<div class="card" data-id="${card.id}">
+            <img src="https://picsum.photos/150" alt="placeholder">
+            <div class="content">
+                <span class="number">${card.id}</span>
+                <div class="content-inner">
+                    <h3>${card.title}</h3>
+                </div>
+                <div class="category">
+                    ${category}
+                </div>
+            </div>
+        </div>`;
+}
+
+function checkboxTemplate(index, title) {
+    return `<label for="category-${index}">
+       <input type="checkbox" value="${index}" id="category-${index}">
+       ${title}
+    </label>`;
+}
+
+function handleMenuClick(e) {
+    setCurrentPage(e.target.getAttribute('data-page'));
+}
+
+function handleCategoryChange() {
+    selectedCategories = [];
+
+    const inputs = document.getElementById('categories').getElementsByTagName('input');
+
+    Array.prototype.slice.call(inputs).forEach(function (input) {
+        if (input.checked) {
+            selectedCategories[input.value] = input.value;
+        }
+    });
+    setCurrentPage(1);
+    redraw();
+}
+
+function handleSortChange() {
+    sortDirection = document.getElementById('sort').value;
+    setCurrentPage(1);
+    redraw();
+}
+
+function redraw() {
+    selectCards();
+    setPageTitle();
+    renderMenuItems();
 }
 
 init();
