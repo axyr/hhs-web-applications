@@ -14,11 +14,10 @@ let selectedCategories = [];
 let selectedCards      = [];
 
 function init() {
-    renderCategories();
     createCards();
     redraw();
 
-    document.getElementById('logo').addEventListener('click', setCurrentPage);
+    document.getElementById('logo').addEventListener('click', toToHomepage);
     document.getElementById('sort').addEventListener('change', handleSortChange);
 }
 
@@ -26,11 +25,13 @@ function setPageTitle() {
     document.getElementsByTagName('title')[0].text = `Page ${currentPage} - Books`;
 }
 
+function toToHomepage() {
+    selectedCategories = [];
+    setCurrentPage(1);
+}
+
 function setCurrentPage(page) {
-    page = parseInt(page);
-
-    currentPage = Number.isNaN(page) ? 1 : page;
-
+    currentPage = page;
     redraw();
 }
 
@@ -144,8 +145,10 @@ function cardTemplate(card) {
 }
 
 function checkboxTemplate(index, title) {
+    const checked = selectedCategories.includes(index) ? 'checked' : '';
+
     return `<label for="category-${index}">
-       <input type="checkbox" value="${index}" id="category-${index}">
+       <input type="checkbox" value="${index}" id="category-${index}" ${checked}>
        ${title}
     </label>`;
 }
@@ -161,7 +164,8 @@ function handleCategoryChange() {
 
     Array.prototype.slice.call(inputs).forEach(function (input) {
         if (input.checked) {
-            selectedCategories[input.value] = input.value;
+            const index = parseInt(input.value);
+            selectedCategories[index] = index;
         }
     });
     setCurrentPage(1);
@@ -175,6 +179,7 @@ function handleSortChange() {
 }
 
 function redraw() {
+    renderCategories();
     selectCards();
     setPageTitle();
     renderMenuItems();

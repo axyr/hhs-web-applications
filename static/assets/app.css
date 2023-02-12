@@ -216,6 +216,8 @@ select {
         border-radius: 0.5rem;
         overflow: hidden;
         box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
+        padding: 0.5rem;
+        background-color: #fff;
     }
 
     #categories .checkbox {
