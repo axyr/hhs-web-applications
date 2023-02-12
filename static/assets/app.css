@@ -83,6 +83,11 @@ header > div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    padding: 0 0 1rem 0;
+}
+
+#categories{
+    flex: 1;
 }
 
 nav ul li {
@@ -107,10 +112,6 @@ nav ul li a.active,
 nav ul li a:hover {
     background-color: #f8fafb;
     border-bottom: 2px solid #0083ff;
-}
-
-#filterbar {
-    padding: 0 0 1rem 0;
 }
 
 .checkbox {
@@ -172,14 +173,32 @@ select {
 }
 
 .card .content .category {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0 0.5rem 1rem;
     text-transform: uppercase;
     font-size: 0.9rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.card .content .favorite {
+    border: none;
+    background: none;
+    width: 1rem;
+    cursor: pointer;
+    margin-right: 1rem;
+    position: relative;
+}
+
+.card .content .favorite img {
+    font-size: 1rem;
+    position: relative;
+    top: 0.2rem;
 }
 
 @media only screen and (max-width: 768px) {
 
-    .card img {
+    .card > img {
         width: 50%;
     }
 }
@@ -223,7 +242,16 @@ select {
     #categories .checkbox {
         margin:0;
         width: calc(100% - 1rem);
-        border-radius: 0;box-shadow: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    #favorites {
+        margin-bottom: 1rem;
+    }
+
+    #favorites .checkbox {
+        width: calc(100% - 1rem);
     }
 
 }
