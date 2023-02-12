@@ -81,10 +81,10 @@ function renderCards() {
 
 function appendCard(targetElement, card) {
     const template = cardTemplate(card);
-    const html     = document.createElement('div');
-    html.className = 'card-holder';
-    html.innerHTML = template;
-    targetElement.appendChild(html);
+    const parent     = document.createElement('div');
+    parent.className = 'card shadow rounded bg-white';
+    parent.innerHTML = template;
+    targetElement.appendChild(parent);
 }
 
 function renderMenuItems() {
@@ -129,7 +129,7 @@ function appendCategory(targetElement, index, category) {
 
 function cardTemplate(card) {
     const category = categories[card.categoryId];
-    return `<div class="card shadow rounded bg-white" data-id="${card.id}">
+    return `
             <img src="https://picsum.photos/300/150" alt="placeholder">
             <div class="content">
                 <span class="number bg-gray">${card.id}</span>
@@ -140,7 +140,7 @@ function cardTemplate(card) {
                     ${category}
                 </div>
             </div>
-        </div>`;
+        `;
 }
 
 function checkboxTemplate(index, title) {
