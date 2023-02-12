@@ -1,7 +1,6 @@
 (function () {
 
     const cards         = [];
-    const menuItems     = [];
     const amountOfCards = 13;
     const cardsPerPage  = 5;
     const categories    = [
@@ -10,14 +9,29 @@
         'Category C',
     ];
 
-    let currentPage        = 1;
-    let sortDirection      = 'asc';
-    let filterFavorites    = false;
-    let selectedCategories = [];
-    let selectedCards      = [];
-    let favoriteCards      = [];
+    let data = {
+        currentPage: 1,
+        sortDirection: 'asc',
+        filterFavorites: false,
+        selectedCategories: [],
+        selectedCards: [],
+        favoriteCards: [],
+    };
+
+    function setData(key, value) {
+        data[key] = value;
+        window.localStorage.setItem('data', JSON.stringify(data));
+    }
+
+    function loadDataFromLocalStorage() {
+        const dataFromLocalStorage = window.localStorage.getItem('data');
+        if(dataFromLocalStorage) {
+            data = JSON.parse(dataFromLocalStorage);
+        }
+    }
 
     function init() {
+        loadDataFromLocalStorage();
         createCards();
         redraw();
 
@@ -26,16 +40,16 @@
     }
 
     function setPageTitle() {
-        document.getElementsByTagName('title')[0].text = `Page ${currentPage} - Books`;
+        document.getElementsByTagName('title')[0].text = `Page ${data.currentPage} - Books`;
     }
 
     function toToHomepage() {
-        selectedCategories = [];
+        setData('selectedCategories', []);
         setCurrentPage(1);
     }
 
     function setCurrentPage(page) {
-        currentPage = parseInt(page);
+        setData('currentPage', parseInt(page));
         redraw();
     }
 
@@ -52,8 +66,6 @@
 
     function createCards() {
         for (let i = 1; i <= amountOfCards; i++) {
-            console.log(favoriteCards.includes(i));
-
             const card = {
                 id: i,
                 title: `Book ${i}`,
@@ -65,12 +77,12 @@
 
     function selectCards() {
 
-        const low  = sortDirection === 'desc' ? -1 : 1;
-        const high = sortDirection === 'desc' ? 1 : -1;
+        const low  = data.sortDirection === 'desc' ? -1 : 1;
+        const high = data.sortDirection === 'desc' ? 1 : -1;
 
-        selectedCards = cards
-            .filter(card => !Object.keys(selectedCategories).length || selectedCategories.includes(card.categoryId))
-            .filter(card => !filterFavorites || favoriteCards.includes(card.id))
+        data.selectedCards = cards
+            .filter(card => !Object.keys(data.selectedCategories).length || data.selectedCategories.includes(card.categoryId))
+            .filter(card => !data.filterFavorites || data.favoriteCards.includes(card.id))
             .sort((a, b) => (a.id > b.id) ? low : high);
 
         renderCards();
@@ -79,10 +91,10 @@
     function renderCards() {
         const targetElement = getClearedElementById('cards');
 
-        const firstItem = (currentPage * cardsPerPage) - cardsPerPage;
+        const firstItem = (data.currentPage * cardsPerPage) - cardsPerPage;
         const lastItem  = firstItem + cardsPerPage;
 
-        selectedCards
+        data.selectedCards
             .slice(firstItem, lastItem)
             .forEach(function (card) {
                 const element         = appendCard(targetElement, card);
@@ -105,15 +117,15 @@
 
     function renderMenuItems() {
         const targetElement     = getClearedElementById('main-nav');
-        const numberOfMenuItems = Math.ceil(Object.keys(selectedCards).length / cardsPerPage);
+        const numberOfMenuItems = Math.ceil(Object.keys(data.selectedCards).length / cardsPerPage);
 
         for (let i = 1; i <= numberOfMenuItems; i++) {
             const menuItem = {
                 id: i,
                 title: `Page ${i}`,
-                active: i === currentPage,
+                active: i === data.currentPage,
             };
-            menuItems.push(menuItem);
+
             const element = appendMenuItem(targetElement, menuItem);
             element.addEventListener('click', handleMenuClick);
         }
@@ -130,7 +142,7 @@
     function renderCategoryCheckboxes() {
         const targetElement = getClearedElementById('categories');
         categories.forEach(function (category, index) {
-            const checked = selectedCategories.includes(index);
+            const checked = data.selectedCategories.includes(index);
             const element = appendCheckbox(targetElement, index, category, checked);
             element.addEventListener('change', handleCategoryChange);
         });
@@ -138,8 +150,8 @@
 
     function renderFavoriteCheckbox() {
         const targetElement = getClearedElementById('favorites');
-        const favoriteCount = Object.keys(favoriteCards).length;
-        const element       = appendCheckbox(targetElement, 'favorite', `Favorites (${favoriteCount})`, filterFavorites);
+        const favoriteCount = Object.keys(data.favoriteCards).length;
+        const element       = appendCheckbox(targetElement, 'favorite', `Favorites (${favoriteCount})`, data.filterFavorites);
         element.addEventListener('change', handleFavoriteChange);
     }
 
@@ -154,7 +166,7 @@
     function cardTemplate(card) {
         const category = categories[card.categoryId];
 
-        const favoriteImage = favoriteCards.includes(card.id) ? './assets/img/heart-solid.svg' : './assets/img/heart-regular.svg';
+        const favoriteImage = data.favoriteCards.includes(card.id) ? './assets/img/heart-solid.svg' : './assets/img/heart-regular.svg';
         return `
             <img src="https://picsum.photos/300/150" alt="placeholder">
             <div class="content">
@@ -175,9 +187,9 @@
     function checkboxTemplate(value, label, checked) {
         checked = checked ? 'checked' : '';
         return `<label for="checkbox-${value}">
-       <input type="checkbox" value="${value}" id="checkbox-${value}" ${checked}>
-       ${label}
-    </label>`;
+           <input type="checkbox" value="${value}" id="checkbox-${value}" ${checked}>
+           ${label}
+        </label>`;
     }
 
     function handleMenuClick(e) {
@@ -185,7 +197,7 @@
     }
 
     function handleCategoryChange() {
-        selectedCategories = [];
+        const selectedCategories = [];
 
         const inputs = document.getElementById('categories').getElementsByTagName('input');
 
@@ -194,23 +206,27 @@
                 selectedCategories.push(parseInt(input.value));
             }
         });
+
+        setData('selectedCategories', selectedCategories);
+
         setCurrentPage(1);
         redraw();
     }
 
     function handleFavoriteChange(e) {
-        filterFavorites = e.target.checked;
+        setData('filterFavorites', e.target.checked);
         setCurrentPage(1);
         redraw();
     }
 
     function handleSortChange() {
-        sortDirection = document.getElementById('sort').value;
+        setData('sortDirection', document.getElementById('sort').value);
         setCurrentPage(1);
         redraw();
     }
 
     function toggleFavorite(id) {
+        let favoriteCards = data.favoriteCards;
         id = parseInt(id);
 
         if (favoriteCards.includes(id)) {
@@ -218,6 +234,8 @@
         } else {
             favoriteCards.push(id);
         }
+
+        setData('favoriteCards', favoriteCards);
 
         redraw();
     }
