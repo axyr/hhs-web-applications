@@ -1,0 +1,99 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "title": "Coding and architecture",
+      "itemCount" : 0
+    },
+    {
+      "id": 2,
+      "title": "Algorithms",
+      "itemCount" : 0
+    },
+    {
+      "id": 3,
+      "title": "Security",
+      "itemCount" : 0
+    }
+  ],
+  "items": [
+    {
+      "id": 1,
+      "title": "BDD in Action",
+      "img": "collections/books/images/bdd-in-action.jpg",
+      "categoryId": 3
+    },
+    {
+      "id": 2,
+      "title": "Clean Architecture",
+      "img": "collections/books/images/clean-architecture.jpg",
+      "categoryId": 1
+    },
+    {
+      "id": 3,
+      "title": "Clean Code",
+      "img": "collections/books/images/clean-code.jpg",
+      "categoryId": 1
+    },
+    {
+      "id": 4,
+      "title": "Code that fits in your head",
+      "img": "collections/books/images/code-that-fits-in-your-head.jpg",
+      "categoryId": 1
+    },
+    {
+      "id": 5,
+      "title": "Common sense guide to data structures",
+      "img": "collections/books/images/common-sense-guide-to-data-structures.jpg",
+      "categoryId": 2
+    },
+    {
+      "id": 6,
+      "title": "Data strucures and algorithms in Java",
+      "img": "collections/books/images/data-structures-and-algorithms-in-java.jpg",
+      "categoryId": 2
+    },
+    {
+      "id": 7,
+      "title": "Designing hexagonal architecture with Java",
+      "img": "collections/books/images/designing-hexagonal-architecture-with-java.jpg",
+      "categoryId": 1
+    },
+    {
+      "id": 8,
+      "title": "Domain driven design distilled",
+      "img": "collections/books/images/domain-driven-design-distilled.jpg",
+      "categoryId": 1
+    },
+    {
+      "id": 9,
+      "title": "Grokking algorithms",
+      "img": "collections/books/images/grokking-algorithms.jpg",
+      "categoryId": 2
+    },
+    {
+      "id": 10,
+      "title": "Hacking apis",
+      "img": "collections/books/images/hacking-apis.jpg",
+      "categoryId": 3
+    },
+    {
+      "id": 11,
+      "title": "Head first design patterns",
+      "img": "collections/books/images/head-first-design-patterns.jpg",
+      "categoryId": 1
+    },
+    {
+      "id": 12,
+      "title": "User stories applied",
+      "img": "collections/books/images/user-stories-applied.jpg",
+      "categoryId": 1
+    },
+    {
+      "id": 13,
+      "title": "Web security for developers",
+      "img": "collections/books/images/web-security-for-developers.jpg",
+      "categoryId": 3
+    }
+  ]
+}
