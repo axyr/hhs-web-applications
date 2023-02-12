@@ -211,10 +211,17 @@ select {
         width: 100%;
     }
 
-    #categories .checkbox {
-        margin-right: 0;
+    #categories {
         margin-bottom: 2rem;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
+    }
+
+    #categories .checkbox {
+        margin:0;
         width: calc(100% - 1rem);
+        border-radius: 0;box-shadow: none;
     }
 
 }
