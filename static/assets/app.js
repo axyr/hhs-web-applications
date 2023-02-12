@@ -9,12 +9,13 @@
         'Category C',
     ];
 
+    let selectedCards = [];
+
     let data = {
         currentPage: 1,
         sortDirection: 'asc',
         filterFavorites: false,
         selectedCategories: [],
-        selectedCards: [],
         favoriteCards: [],
     };
 
@@ -26,7 +27,13 @@
     function loadDataFromLocalStorage() {
         const dataFromLocalStorage = window.localStorage.getItem('data');
         if(dataFromLocalStorage) {
-            data = JSON.parse(dataFromLocalStorage);
+            const dataObject = JSON.parse(dataFromLocalStorage);
+
+            for (const [key, value] of Object.entries(dataObject)) {
+                if(data.hasOwnProperty(key)) {
+                    data[key] = value;
+                }
+            }
         }
     }
 
@@ -80,7 +87,7 @@
         const low  = data.sortDirection === 'desc' ? -1 : 1;
         const high = data.sortDirection === 'desc' ? 1 : -1;
 
-        data.selectedCards = cards
+        selectedCards = cards
             .filter(card => !Object.keys(data.selectedCategories).length || data.selectedCategories.includes(card.categoryId))
             .filter(card => !data.filterFavorites || data.favoriteCards.includes(card.id))
             .sort((a, b) => (a.id > b.id) ? low : high);
@@ -94,7 +101,7 @@
         const firstItem = (data.currentPage * cardsPerPage) - cardsPerPage;
         const lastItem  = firstItem + cardsPerPage;
 
-        data.selectedCards
+        selectedCards
             .slice(firstItem, lastItem)
             .forEach(function (card) {
                 const element         = appendCard(targetElement, card);
@@ -117,7 +124,7 @@
 
     function renderMenuItems() {
         const targetElement     = getClearedElementById('main-nav');
-        const numberOfMenuItems = Math.ceil(Object.keys(data.selectedCards).length / cardsPerPage);
+        const numberOfMenuItems = Math.ceil(Object.keys(selectedCards).length / cardsPerPage);
 
         for (let i = 1; i <= numberOfMenuItems; i++) {
             const menuItem = {
