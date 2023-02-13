@@ -9,7 +9,11 @@
         categories: [],
     };
 
+    const onSearchChange = debounce((e) => searchItems(e));
+
     let displayedItems = [];
+
+    let searchTerm = null;
 
     let settings = {
         currentPage: 1,
@@ -64,17 +68,24 @@
         loadSettingsFromLocalStorage();
         fetchItems();
 
-        document.getElementById('logo').addEventListener('click', toToHomepage);
+        document.getElementById('logo').addEventListener('click', toHomepage);
         document.getElementById('sort').addEventListener('change', onSortChange);
+        document.getElementById('search-field').addEventListener('keyup', onSearchChange);
     }
 
     function setPageTitle() {
         document.getElementsByTagName('title')[0].text = `Page ${settings.currentPage} - Books`;
     }
 
-    function toToHomepage() {
+    function toHomepage() {
+        resetSearchTerm();
         updateSetting('selectedCategories', []);
         setCurrentPage(1);
+    }
+
+    function resetSearchTerm() {
+        searchTerm = null;
+        document.getElementById('search-field').value = null;
     }
 
     function setCurrentPage(page) {
@@ -97,6 +108,7 @@
         displayedItems = data.items
             .filter(item => !Object.keys(settings.selectedCategories).length || settings.selectedCategories.includes(item.categoryId))
             .filter(item => !settings.filterFavorites || settings.favoriteCards.includes(item.id))
+            .filter(item => !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase()))
             .sort((a, b) => (a[settings.sortField] > b[settings.sortField]) ? low : high);
 
         renderCards();
@@ -236,14 +248,30 @@
         redraw();
     }
 
-    function onSortChange() {
-        const sort = document.getElementById('sort').value.split('_');
+    function onSortChange(e) {
+        const sort = e.target.value.value.split('_');
 
         updateSetting('sortField', sort[0]);
         updateSetting('sortDirection', sort[1]);
 
         setCurrentPage(1);
         redraw();
+    }
+
+    function searchItems(e) {
+        searchTerm = e.target.value;
+        setCurrentPage(1);
+        redraw();
+    }
+
+    function debounce(func, timeout = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                func.apply(this, args);
+            }, timeout);
+        };
     }
 
     function toggleFavorite(id) {

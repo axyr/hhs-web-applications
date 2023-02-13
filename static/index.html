@@ -27,7 +27,9 @@
 <main>
     <div class="container">
         <div id="filterbar">
-            <div id="categories"></div>
+            <div id="search">
+                <input type="text" id="search-field" class="rounded shadow" placeholder="Search...">
+            </div>
             <div id="favorites"></div>
             <select id="sort" class="shadow rounded">
                 <option value="title_asc">Sort by title ascending</option>
@@ -36,6 +38,8 @@
                 <option value="id_desc">Sort by id descending</option>
             </select>
         </div>
+
+        <div id="categories"></div>
         <div id="cards"></div>
     </div>
 </main>

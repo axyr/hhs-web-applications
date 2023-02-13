@@ -87,7 +87,7 @@ header > div {
 }
 
 #categories {
-    flex: 1;
+   padding-bottom: 1rem;
 }
 
 nav ul li {
@@ -114,6 +114,22 @@ nav ul li a:hover {
     border-bottom: 2px solid #0083ff;
 }
 
+#search {
+    flex-grow: 1;
+    padding-right: 2rem;
+}
+
+input {
+    padding: 0.5rem;
+    border: none;
+    outline: none;
+    background-color: #fff;
+}
+
+input[type=text] {
+    width: 100%;
+}
+
 .checkbox {
     display: inline-block;
     padding: 0.5rem;
@@ -137,6 +153,7 @@ select {
     margin-bottom: 1rem;
     max-height: 2.5rem;
     cursor: pointer;
+    color: #101827;
 }
 
 .card {
@@ -217,8 +234,17 @@ select {
         display: block;
     }
 
+    #search{
+        padding-bottom:2rem;
+        width: calc(100% - 2rem);
+    }
+
+    #search input{
+        padding: 0.5rem 1rem;
+    }
+
     #filterbar select {
-        padding: 1rem;
+        padding: 0.5rem 1rem;
         line-height: 1rem;
         max-height: none;
         width: 100%;
@@ -245,7 +271,7 @@ select {
     }
 
     #favorites .checkbox {
-        padding: 1rem;
+        padding: 0.5rem 1rem;
         width: calc(100% - 2rem);
     }
 }
