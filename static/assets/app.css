@@ -133,10 +133,9 @@ nav ul li a:hover {
 
 select {
     border: none;
-    height: 2.5rem;
     padding: 0.5rem;
     margin-bottom: 1rem;
-    overflow: hidden;
+    max-height: 2.5rem;
     cursor: pointer;
 }
 
@@ -215,34 +214,13 @@ select {
 
     #filterbar {
         flex-direction: column-reverse;
-    }
-
-}
-
-@media only screen and (max-width: 480px) {
-
-    header > div {
-        flex-direction: column;
-    }
-
-    #logo {
-        text-align: center;
-    }
-
-    #logo span {
-        display: none;
-    }
-
-    nav ul li a.active,
-    nav ul li a:hover {
-        background: none;
-    }
-
-    #filterbar {
         display: block;
     }
 
-    select {
+    #filterbar select {
+        padding: 1rem;
+        line-height: 1rem;
+        max-height: none;
         width: 100%;
     }
 
@@ -267,23 +245,42 @@ select {
     }
 
     #favorites .checkbox {
-        width: calc(100% - 1rem);
+        padding: 1rem;
+        width: calc(100% - 2rem);
+    }
+}
+
+@media only screen and (max-width: 480px) {
+
+    header > div {
+        flex-direction: column;
+    }
+
+    #logo {
+        text-align: center;
+    }
+
+    #logo span {
+        display: none;
+    }
+
+    nav ul li a.active,
+    nav ul li a:hover {
+        background: none;
     }
 
     .card {
         flex-direction: column;
     }
 
+    .card .content .number {
+        padding-top: 1rem;
+        height: 100%;
+    }
+
     .card .image {
         width: 100%;
         max-width: 100%;
         height: auto;
-    }
-}
-
-@media only screen and (max-width: 320px) {
-
-    .card > img {
-        display: none;
     }
 }

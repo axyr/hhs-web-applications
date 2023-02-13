@@ -13,6 +13,7 @@
 
     let settings = {
         currentPage: 1,
+        sortField: 'title',
         sortDirection: 'asc',
         filterFavorites: false,
         selectedCategories: [],
@@ -64,7 +65,7 @@
         fetchItems();
 
         document.getElementById('logo').addEventListener('click', toToHomepage);
-        document.getElementById('sort').addEventListener('change', handleSortChange);
+        document.getElementById('sort').addEventListener('change', onSortChange);
     }
 
     function setPageTitle() {
@@ -96,7 +97,7 @@
         displayedItems = data.items
             .filter(item => !Object.keys(settings.selectedCategories).length || settings.selectedCategories.includes(item.categoryId))
             .filter(item => !settings.filterFavorites || settings.favoriteCards.includes(item.id))
-            .sort((a, b) => (a.id > b.id) ? low : high);
+            .sort((a, b) => (a[settings.sortField] > b[settings.sortField]) ? low : high);
 
         renderCards();
     }
@@ -140,7 +141,7 @@
             };
 
             const element = appendMenuItem(targetElement, menuItem);
-            element.addEventListener('click', handleMenuClick);
+            element.addEventListener('click', onMenuClick);
         }
     }
 
@@ -158,7 +159,7 @@
         data.categories.forEach(function (category) {
             const checked = settings.selectedCategories.includes(category.id);
             const element = appendCheckbox(targetElement, category.id, `${category.title} (${category.itemCount})`, checked);
-            element.addEventListener('change', handleCategoryChange);
+            element.addEventListener('change', onCategoryChange);
         });
     }
 
@@ -166,7 +167,7 @@
         const targetElement = getClearedElementById('favorites');
         const favoriteCount = Object.keys(settings.favoriteCards).length;
         const element       = appendCheckbox(targetElement, 'favorite', `Favorites (${favoriteCount})`, settings.filterFavorites);
-        element.addEventListener('change', handleFavoriteChange);
+        element.addEventListener('change', onFavoriteChange);
     }
 
     function appendCheckbox(targetElement, value, label, checked) {
@@ -208,11 +209,11 @@
         </label>`;
     }
 
-    function handleMenuClick(e) {
+    function onMenuClick(e) {
         setCurrentPage(e.target.getAttribute('data-page'));
     }
 
-    function handleCategoryChange() {
+    function onCategoryChange() {
         const selectedCategories = [];
 
         const inputs = document.getElementById('categories').getElementsByTagName('input');
@@ -229,14 +230,18 @@
         redraw();
     }
 
-    function handleFavoriteChange(e) {
+    function onFavoriteChange(e) {
         updateSetting('filterFavorites', e.target.checked);
         setCurrentPage(1);
         redraw();
     }
 
-    function handleSortChange() {
-        updateSetting('sortDirection', document.getElementById('sort').value);
+    function onSortChange() {
+        const sort = document.getElementById('sort').value.split('_');
+
+        updateSetting('sortField', sort[0]);
+        updateSetting('sortDirection', sort[1]);
+
         setCurrentPage(1);
         redraw();
     }
