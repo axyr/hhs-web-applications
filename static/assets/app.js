@@ -90,7 +90,7 @@
         },
         displayCards() {
             const low = this.settings.sortDirection === 'desc' ? -1 : 1;
-            const high = this.settings.sortDirection === 'desc' ? 1 : -1;
+            const high = low * -1;
 
             this.displayedItems = this.data.items
                 .filter(item => !Object.keys(this.settings.selectedCategories).length || this.settings.selectedCategories.includes(item.categoryId))
