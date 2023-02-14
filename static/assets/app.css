@@ -86,8 +86,12 @@ header > div {
     padding: 0 0 1rem 0;
 }
 
+#collections {
+    margin: 0 1rem 2rem 0;
+}
+
 #categories {
-   padding-bottom: 1rem;
+    padding-bottom: 1rem;
 }
 
 nav ul li {
@@ -234,12 +238,12 @@ select {
         display: block;
     }
 
-    #search{
-        padding-bottom:2rem;
+    #search {
+        padding-bottom: 2rem;
         width: calc(100% - 2rem);
     }
 
-    #search input{
+    #search input {
         padding: 0.5rem 1rem;
     }
 

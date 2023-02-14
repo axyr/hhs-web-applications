@@ -2,7 +2,16 @@
 
     const collection = {
         cardsPerPage: 5,
-        collectionSource: './collections/books/index.json',
+        collections: {
+            'books': {
+                title: 'Books',
+                url: './collections/books/index.json',
+            },
+            'pokemon': {
+                title: 'Pokemon',
+                url: './collections/pokemon/index.json',
+            },
+        },
         collection: {
             name: 'Collections',
             owner: 'Martijn van Nieuwenhoven',
@@ -10,6 +19,7 @@
             items: [],
             categories: []
         },
+        currentCollection: 'books',
         data: {
             currentPage: 1,
             sortField: 'title',
@@ -23,10 +33,16 @@
         init() {
             this.loadDataFromLocalStorage();
             this.initEventListeners();
+            this.setCollectionSelectOptions();
             this.fetchCollection();
         },
         loadDataFromLocalStorage() {
-            const dataFromLocalStorage = window.localStorage.getItem('data');
+            const currentCollection = window.localStorage.getItem('currentCollection');
+            if (currentCollection) {
+                this.currentCollection = currentCollection;
+            }
+
+            const dataFromLocalStorage = window.localStorage.getItem(`data.${this.currentCollection}`);
             if (dataFromLocalStorage) {
                 const data = JSON.parse(dataFromLocalStorage);
 
@@ -39,11 +55,12 @@
         },
         initEventListeners() {
             document.getElementById('logo').addEventListener('click', e => this.toHomepage(e));
+            document.getElementById('collections').addEventListener('change', e => this.onCollectionChange(e));
             document.getElementById('sort').addEventListener('change', e => this.onSortChange(e));
             document.getElementById('search-field').addEventListener('keyup', this.debounce((e) => this.searchItems(e), 300));
         },
         fetchCollection() {
-            fetch(this.collectionSource).then(response => {
+            fetch(this.collections[this.currentCollection].url).then(response => {
                 return response.json();
             }).catch(error => {
                 console.log(error);
@@ -73,7 +90,7 @@
         },
         updateData(key, value) {
             this.data[key] = value;
-            window.localStorage.setItem('data', JSON.stringify(this.data));
+            window.localStorage.setItem(`data.${this.currentCollection}`, JSON.stringify(this.data));
         },
         setMetaTitle() {
             document.getElementsByTagName('title')[0].textContent = `Page ${this.data.currentPage} - ${this.collection.name}`;
@@ -96,6 +113,7 @@
 
             document.head.appendChild(link);
             link.rel = 'icon';
+            link.type = 'image/x-icon';
             link.href = this.collection.logo;
         },
         resetSearchTerm() {
@@ -177,6 +195,15 @@
             li.innerHTML = template;
             return targetElement.appendChild(li);
         },
+        setCollectionSelectOptions() {
+            const select = document.getElementById('collections');
+            select.innerHTML = '';
+            for (const [key, value] of Object.entries(this.collections)) {
+                let option = new Option(value.title, key);
+                select.add(option, undefined);
+            }
+            select.value = this.currentCollection;
+        },
         renderCategoryCheckboxes() {
             const targetElement = this.getClearedElementById('categories');
             this.collection.categories.forEach(category => this.renderCategoryCheckbox(targetElement, category));
@@ -249,6 +276,11 @@
             this.updateData('filterFavorites', e.target.checked);
             this.setCurrentPage(1);
             this.redraw();
+        },
+        onCollectionChange(e) {
+            this.currentCollection = e.target.value;
+            window.localStorage.setItem('currentCollection', this.currentCollection);
+            this.init();
         },
         onSortChange(e) {
             const sort = e.target.value.split('_');
