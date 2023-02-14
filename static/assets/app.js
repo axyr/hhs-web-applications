@@ -57,7 +57,7 @@
             document.getElementById('logo').addEventListener('click', e => this.toHomepage(e));
             document.getElementById('collections').addEventListener('change', e => this.onCollectionChange(e));
             document.getElementById('sort').addEventListener('change', e => this.onSortChange(e));
-            document.getElementById('search-field').addEventListener('keyup', this.debounce((e) => this.searchItems(e), 300));
+            document.getElementById('search-field').addEventListener('input', this.debounce((e) => this.searchItems(e), 300));
         },
         fetchCollection() {
             fetch(this.collections[this.currentCollection].url).then(response => {

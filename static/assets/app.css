@@ -130,7 +130,7 @@ input {
     background-color: #fff;
 }
 
-input[type=text] {
+input[type=text], input[type=search] {
     width: 100%;
 }
 
