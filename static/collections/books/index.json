@@ -1,19 +1,22 @@
 {
+  "name": "Books",
+  "owner": "Martijn van Nieuwenhoven",
+  "logo": "./collections/books/assets/logo.png",
   "categories": [
     {
       "id": 1,
       "title": "Coding and architecture",
-      "itemCount" : 0
+      "itemCount": 0
     },
     {
       "id": 2,
       "title": "Algorithms",
-      "itemCount" : 0
+      "itemCount": 0
     },
     {
       "id": 3,
       "title": "Security",
-      "itemCount" : 0
+      "itemCount": 0
     }
   ],
   "items": [

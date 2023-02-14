@@ -2,12 +2,15 @@
 
     const collection = {
         cardsPerPage: 5,
-        dataSource: './collections/books/index.json',
-        data: {
+        collectionSource: './collections/books/index.json',
+        collection: {
+            name: 'Collections',
+            owner: 'Martijn van Nieuwenhoven',
+            logo: './assets/logo.png',
             items: [],
-            categories: [],
+            categories: []
         },
-        settings: {
+        data: {
             currentPage: 1,
             sortField: 'title',
             sortDirection: 'asc',
@@ -18,18 +21,18 @@
         displayedItems: [],
         searchTerm: null,
         init() {
-            this.loadSettingsFromLocalStorage();
+            this.loadDataFromLocalStorage();
             this.initEventListeners();
-            this.fetchItems();
+            this.fetchCollection();
         },
-        loadSettingsFromLocalStorage() {
-            const settingsFromLocalStorage = window.localStorage.getItem('settings');
-            if (settingsFromLocalStorage) {
-                const settingsObject = JSON.parse(settingsFromLocalStorage);
+        loadDataFromLocalStorage() {
+            const dataFromLocalStorage = window.localStorage.getItem('data');
+            if (dataFromLocalStorage) {
+                const data = JSON.parse(dataFromLocalStorage);
 
-                for (const [key, value] of Object.entries(settingsObject)) {
-                    if (this.settings.hasOwnProperty(key)) {
-                        this.settings[key] = value;
+                for (const [key, value] of Object.entries(data)) {
+                    if (this.data.hasOwnProperty(key)) {
+                        this.data[key] = value;
                     }
                 }
             }
@@ -39,35 +42,61 @@
             document.getElementById('sort').addEventListener('change', e => this.onSortChange(e));
             document.getElementById('search-field').addEventListener('keyup', this.debounce((e) => this.searchItems(e), 300));
         },
-        fetchItems() {
-            fetch(this.dataSource).then(response => {
+        fetchCollection() {
+            fetch(this.collectionSource).then(response => {
                 return response.json();
             }).catch(error => {
                 console.log(error);
                 console.log('Could not load items');
             }).then(json => {
-                this.data.items = json.items;
-                this.data.categories = json.categories;
-                this.data.items.forEach(item => this.setCategoryTotals(item));
+                this.collection = json;
+                this.collection.items.forEach(item => this.setCategoryTotals(item));
+                this.setPageElements();
                 this.redraw();
             });
         },
         setCategoryTotals(item) {
-            this.data.categories.forEach(category => item.categoryId === category.id ? category.itemCount++ : null);
+            this.collection.categories.forEach(category => item.categoryId === category.id ? category.itemCount++ : null);
+        },
+        setPageElements() {
+            this.setPageTitle();
+            this.setFooterText();
+            this.setLogo();
+            this.setFavicon();
         },
         redraw() {
             this.renderCategoryCheckboxes();
             this.renderFavoriteCheckbox();
             this.displayCards();
-            this.setPageTitle();
+            this.setMetaTitle();
             this.renderMenuItems();
         },
-        updateSetting(key, value) {
-            this.settings[key] = value;
-            window.localStorage.setItem('settings', JSON.stringify(this.settings));
+        updateData(key, value) {
+            this.data[key] = value;
+            window.localStorage.setItem('data', JSON.stringify(this.data));
+        },
+        setMetaTitle() {
+            document.getElementsByTagName('title')[0].textContent = `Page ${this.data.currentPage} - ${this.collection.name}`;
         },
         setPageTitle() {
-            document.getElementsByTagName('title')[0].text = `Page ${this.settings.currentPage} - Books`;
+            document.getElementById('page-title').textContent = this.collection.name;
+        },
+        setFooterText() {
+            const currentYear = new Date().getFullYear();
+            document.getElementById('footer-text').textContent = `© ${currentYear} ${this.collection.owner}`;
+        },
+        setLogo() {
+            const logoImage = document.getElementById('logo-image');
+
+            logoImage.setAttribute('src', this.collection.logo);
+            logoImage.setAttribute('alt', `${this.collection.name} Logo`);
+        },
+        setFavicon() {
+            const link = document.createElement('link');
+
+            document.head.appendChild(link);
+            link.rel = 'icon';
+            link.href = this.collection.logo;
         },
         resetSearchTerm() {
             this.searchTerm = null;
@@ -75,11 +104,11 @@
         },
         toHomepage() {
             this.resetSearchTerm();
-            this.updateSetting('selectedCategories', []);
+            this.updateData('selectedCategories', []);
             this.setCurrentPage(1);
         },
         setCurrentPage(page) {
-            this.updateSetting('currentPage', parseInt(page));
+            this.updateData('currentPage', parseInt(page));
             this.redraw();
         },
         getClearedElementById(id) {
@@ -89,21 +118,21 @@
             return element;
         },
         displayCards() {
-            const low = this.settings.sortDirection === 'desc' ? -1 : 1;
+            const low = this.data.sortDirection === 'desc' ? -1 : 1;
             const high = low * -1;
 
-            this.displayedItems = this.data.items
-                .filter(item => !Object.keys(this.settings.selectedCategories).length || this.settings.selectedCategories.includes(item.categoryId))
-                .filter(item => !this.settings.filterFavorites || this.settings.favoriteCards.includes(item.id))
+            this.displayedItems = this.collection.items
+                .filter(item => !Object.keys(this.data.selectedCategories).length || this.data.selectedCategories.includes(item.categoryId))
+                .filter(item => !this.data.filterFavorites || this.data.favoriteCards.includes(item.id))
                 .filter(item => !this.searchTerm || item.title.toLowerCase().includes(this.searchTerm.toLowerCase()))
-                .sort((a, b) => (a[this.settings.sortField] > b[this.settings.sortField]) ? low : high);
+                .sort((a, b) => (a[this.data.sortField] > b[this.data.sortField]) ? low : high);
 
             this.renderCards();
         },
         renderCards() {
             const targetElement = this.getClearedElementById('cards');
 
-            const firstItem = (this.settings.currentPage * this.cardsPerPage) - this.cardsPerPage;
+            const firstItem = (this.data.currentPage * this.cardsPerPage) - this.cardsPerPage;
             const lastItem = firstItem + this.cardsPerPage;
 
             this.displayedItems
@@ -133,7 +162,7 @@
                 const menuItem = {
                     id: i,
                     title: `Page ${i}`,
-                    active: i === this.settings.currentPage,
+                    active: i === this.data.currentPage,
                 };
 
                 const element = this.appendMenuItem(targetElement, menuItem);
@@ -150,18 +179,18 @@
         },
         renderCategoryCheckboxes() {
             const targetElement = this.getClearedElementById('categories');
-            this.data.categories.forEach(category => this.renderCategoryCheckbox(targetElement, category));
+            this.collection.categories.forEach(category => this.renderCategoryCheckbox(targetElement, category));
         },
         renderCategoryCheckbox(targetElement, category) {
-            const checked = this.settings.selectedCategories.includes(category.id);
+            const checked = this.data.selectedCategories.includes(category.id);
             const element = this.appendCheckbox(targetElement, category.id, `${category.title} (${category.itemCount})`, checked);
 
             element.addEventListener('change', e => this.onCategoryChange(e));
         },
         renderFavoriteCheckbox() {
             const targetElement = this.getClearedElementById('favorites');
-            const favoriteCount = Object.keys(this.settings.favoriteCards).length;
-            const element = this.appendCheckbox(targetElement, 'favorite', `Favorites (${favoriteCount})`, this.settings.filterFavorites);
+            const favoriteCount = Object.keys(this.data.favoriteCards).length;
+            const element = this.appendCheckbox(targetElement, 'favorite', `Favorites (${favoriteCount})`, this.data.filterFavorites);
 
             element.addEventListener('change', e => this.onFavoriteChange(e));
         },
@@ -174,8 +203,8 @@
             return targetElement.appendChild(html);
         },
         cardTemplate(card) {
-            const category = this.data.categories.find(category => category.id === card.categoryId);
-            const favoriteImage = this.settings.favoriteCards.includes(card.id) ? './assets/img/heart-solid.svg' : './assets/img/heart-regular.svg';
+            const category = this.collection.categories.find(category => category.id === card.categoryId);
+            const favoriteImage = this.data.favoriteCards.includes(card.id) ? './assets/img/heart-solid.svg' : './assets/img/heart-regular.svg';
 
             return `
             <div class="image">
@@ -212,20 +241,20 @@
 
             Array.prototype.slice.call(inputs).forEach(input => input.checked ? selectedCategories.push(parseInt(input.value)) : null);
 
-            this.updateSetting('selectedCategories', selectedCategories);
+            this.updateData('selectedCategories', selectedCategories);
             this.setCurrentPage(1);
             this.redraw();
         },
         onFavoriteChange(e) {
-            this.updateSetting('filterFavorites', e.target.checked);
+            this.updateData('filterFavorites', e.target.checked);
             this.setCurrentPage(1);
             this.redraw();
         },
         onSortChange(e) {
             const sort = e.target.value.split('_');
 
-            this.updateSetting('sortField', sort[0]);
-            this.updateSetting('sortDirection', sort[1]);
+            this.updateData('sortField', sort[0]);
+            this.updateData('sortDirection', sort[1]);
 
             this.setCurrentPage(1);
             this.redraw();
@@ -236,7 +265,7 @@
             this.redraw();
         },
         toggleFavorite(id) {
-            let favoriteCards = this.settings.favoriteCards;
+            let favoriteCards = this.data.favoriteCards;
             id = parseInt(id);
 
             if (favoriteCards.includes(id)) {
@@ -245,7 +274,7 @@
                 favoriteCards.push(id);
             }
 
-            this.updateSetting('favoriteCards', favoriteCards);
+            this.updateData('favoriteCards', favoriteCards);
 
             this.redraw();
         },
