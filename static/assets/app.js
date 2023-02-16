@@ -1,183 +1,327 @@
-const cards         = [];
-const menuItems     = [];
-const amountOfCards = 13;
-const cardsPerPage  = 5;
-const categories    = [
-    'Category A',
-    'Category B',
-    'Category C',
-];
+(function () {
 
-let currentPage        = 1;
-let sortDirection      = 'asc';
-let selectedCategories = [];
-let selectedCards      = [];
+    const collection = {
+        cardsPerPage: 5,
+        collections: {
+            'books': {
+                title: 'Books',
+                url: './collections/books/index.json',
+            },
+            'pokemon': {
+                title: 'Pokemon',
+                url: './collections/pokemon/index.json',
+            },
+        },
+        collection: {
+            name: 'Collections',
+            owner: 'Martijn van Nieuwenhoven',
+            logo: './assets/logo.png',
+            items: [],
+            categories: []
+        },
+        currentCollection: 'books',
+        data: {
+            currentPage: 1,
+            sortField: 'title',
+            sortDirection: 'asc',
+            filterFavorites: false,
+            selectedCategories: [],
+            favoriteCards: [],
+        },
+        displayedItems: [],
+        searchTerm: null,
+        init() {
+            this.loadDataFromLocalStorage();
+            this.initEventListeners();
+            this.setCollectionSelectOptions();
+            this.fetchCollection();
+        },
+        loadDataFromLocalStorage() {
+            const currentCollection = window.localStorage.getItem('currentCollection');
+            if (currentCollection) {
+                this.currentCollection = currentCollection;
+            }
 
-function init() {
-    renderCategories();
-    createCards();
-    redraw();
+            const dataFromLocalStorage = window.localStorage.getItem(`data.${this.currentCollection}`);
+            if (dataFromLocalStorage) {
+                const data = JSON.parse(dataFromLocalStorage);
 
-    document.getElementById('logo').addEventListener('click', setCurrentPage);
-    document.getElementById('sort').addEventListener('change', handleSortChange);
-}
+                for (const [key, value] of Object.entries(data)) {
+                    if (this.data.hasOwnProperty(key)) {
+                        this.data[key] = value;
+                    }
+                }
+            }
+        },
+        initEventListeners() {
+            document.getElementById('logo').addEventListener('click', e => this.toHomepage(e));
+            document.getElementById('collections').addEventListener('change', e => this.onCollectionChange(e));
+            document.getElementById('sort').addEventListener('change', e => this.onSortChange(e));
+            document.getElementById('search-field').addEventListener('input', this.debounce((e) => this.searchItems(e), 300));
+        },
+        fetchCollection() {
+            fetch(this.collections[this.currentCollection].url).then(response => {
+                return response.json();
+            }).catch(error => {
+                console.log(error);
+                console.log('Could not load items');
+            }).then(json => {
+                this.collection = json;
+                this.collection.items.forEach(item => this.setCategoryTotals(item));
+                this.setPageElements();
+                this.redraw();
+            });
+        },
+        setCategoryTotals(item) {
+            this.collection.categories.forEach(category => item.categoryId === category.id ? category.itemCount++ : null);
+        },
+        setPageElements() {
+            this.setPageTitle();
+            this.setFooterText();
+            this.setLogo();
+            this.setFavicon();
+        },
+        redraw() {
+            this.renderCategoryCheckboxes();
+            this.renderFavoriteCheckbox();
+            this.displayCards();
+            this.setMetaTitle();
+            this.renderMenuItems();
+        },
+        updateData(key, value) {
+            this.data[key] = value;
+            window.localStorage.setItem(`data.${this.currentCollection}`, JSON.stringify(this.data));
+        },
+        setMetaTitle() {
+            document.getElementsByTagName('title')[0].textContent = `Page ${this.data.currentPage} - ${this.collection.name}`;
+        },
+        setPageTitle() {
+            document.getElementById('page-title').textContent = this.collection.name;
+        },
+        setFooterText() {
+            const currentYear = new Date().getFullYear();
+            document.getElementById('footer-text').textContent = `© ${currentYear} ${this.collection.owner}`;
+        },
+        setLogo() {
+            const logoImage = document.getElementById('logo-image');
 
-function setPageTitle() {
-    document.getElementsByTagName('title')[0].text = `Page ${currentPage} - Books`;
-}
+            logoImage.setAttribute('src', this.collection.logo);
+            logoImage.setAttribute('alt', `${this.collection.name} Logo`);
+        },
+        setFavicon() {
+            const link = document.createElement('link');
 
-function setCurrentPage(page) {
-    page = parseInt(page);
+            document.head.appendChild(link);
+            link.rel = 'icon';
+            link.type = 'image/x-icon';
+            link.href = this.collection.logo;
+        },
+        resetSearchTerm() {
+            this.searchTerm = null;
+            document.getElementById('search-field').value = null;
+        },
+        toHomepage() {
+            this.resetSearchTerm();
+            this.updateData('selectedCategories', []);
+            this.setCurrentPage(1);
+        },
+        setCurrentPage(page) {
+            this.updateData('currentPage', parseInt(page));
+            this.redraw();
+        },
+        getClearedElementById(id) {
+            const element = document.getElementById(id);
+            element.innerHTML = '';
 
-    currentPage = Number.isNaN(page) ? 1 : page;
+            return element;
+        },
+        displayCards() {
+            const low = this.data.sortDirection === 'desc' ? -1 : 1;
+            const high = low * -1;
 
-    redraw();
-}
+            this.displayedItems = this.collection.items
+                .filter(item => !Object.keys(this.data.selectedCategories).length || this.data.selectedCategories.includes(item.categoryId))
+                .filter(item => !this.data.filterFavorites || this.data.favoriteCards.includes(item.id))
+                .filter(item => !this.searchTerm || item.title.toLowerCase().includes(this.searchTerm.toLowerCase()))
+                .sort((a, b) => (a[this.data.sortField] > b[this.data.sortField]) ? low : high);
 
-function getRandomCategoryId() {
-    return Math.floor(Math.random() * categories.length);
-}
+            this.renderCards();
+        },
+        renderCards() {
+            const targetElement = this.getClearedElementById('cards');
 
-function getClearedElementById(id) {
-    const element     = document.getElementById(id);
-    element.innerHTML = '';
+            const firstItem = (this.data.currentPage * this.cardsPerPage) - this.cardsPerPage;
+            const lastItem = firstItem + this.cardsPerPage;
 
-    return element;
-}
+            this.displayedItems
+                .slice(firstItem, lastItem)
+                .forEach(card => this.renderCard(targetElement, card));
+        },
+        renderCard(targetElement, card) {
+            const element = this.appendCard(targetElement, card);
+            const favoriteButtons = element.getElementsByClassName('favorite');
+            Array.prototype.forEach.call(favoriteButtons, element => this.addtoggleFavoriteListener(element));
+        },
+        addtoggleFavoriteListener(element) {
+            element.addEventListener('click', e => this.toggleFavorite(e.target.tagName === 'IMG' ? e.target.parentElement.value : e.target.value));
+        },
+        appendCard(targetElement, card) {
+            const template = this.cardTemplate(card);
+            const parent = document.createElement('div');
+            parent.className = 'card shadow rounded bg-white';
+            parent.innerHTML = template;
+            return targetElement.appendChild(parent);
+        },
+        renderMenuItems() {
+            const targetElement = this.getClearedElementById('main-nav');
+            const numberOfMenuItems = Math.ceil(Object.keys(this.displayedItems).length / this.cardsPerPage);
 
-function createCards() {
-    for (let i = 1; i <= amountOfCards; i++) {
-        const card = {
-            id: i,
-            title: `Book ${i}`,
-            categoryId: getRandomCategoryId(),
-        };
-        cards.push(card);
-    }
-}
+            for (let i = 1; i <= numberOfMenuItems; i++) {
+                const menuItem = {
+                    id: i,
+                    title: `Page ${i}`,
+                    active: i === this.data.currentPage,
+                };
 
-function selectCards() {
+                const element = this.appendMenuItem(targetElement, menuItem);
 
-    const low  = sortDirection === 'desc' ? -1 : 1;
-    const high = sortDirection === 'desc' ? 1 : -1;
+                element.addEventListener('click', e => this.onMenuClick(e));
+            }
+        },
+        appendMenuItem(targetElement, menuItem) {
+            const className = menuItem.active ? 'active' : '';
+            const template = `<a href="#" title="View ${menuItem.title}" data-page="${menuItem.id}" class="${className}">${menuItem.title}</a>`;
+            const li = document.createElement('li');
+            li.innerHTML = template;
+            return targetElement.appendChild(li);
+        },
+        setCollectionSelectOptions() {
+            const select = document.getElementById('collections');
+            select.innerHTML = '';
+            for (const [key, value] of Object.entries(this.collections)) {
+                let option = new Option(value.title, key);
+                select.add(option, undefined);
+            }
+            select.value = this.currentCollection;
+        },
+        renderCategoryCheckboxes() {
+            const targetElement = this.getClearedElementById('categories');
+            this.collection.categories.forEach(category => this.renderCategoryCheckbox(targetElement, category));
+        },
+        renderCategoryCheckbox(targetElement, category) {
+            const checked = this.data.selectedCategories.includes(category.id);
+            const element = this.appendCheckbox(targetElement, category.id, `${category.title} (${category.itemCount})`, checked);
 
-    selectedCards = cards
-        .filter(card => !selectedCategories.length || typeof selectedCategories[card.categoryId] !== 'undefined')
-        .sort((a, b) => (a.id > b.id) ? low : high);
+            element.addEventListener('change', e => this.onCategoryChange(e));
+        },
+        renderFavoriteCheckbox() {
+            const targetElement = this.getClearedElementById('favorites');
+            const favoriteCount = Object.keys(this.data.favoriteCards).length;
+            const element = this.appendCheckbox(targetElement, 'favorite', `Favorites (${favoriteCount})`, this.data.filterFavorites);
 
-    renderCards();
-}
+            element.addEventListener('change', e => this.onFavoriteChange(e));
+        },
+        appendCheckbox(targetElement, value, label, checked) {
+            const checkbox = this.checkboxTemplate(value, label, checked);
+            const html = document.createElement('div');
+            html.className = 'checkbox shadow rounded bg-white';
+            html.innerHTML = checkbox;
 
-function renderCards() {
-    const targetElement = getClearedElementById('cards');
+            return targetElement.appendChild(html);
+        },
+        cardTemplate(card) {
+            const category = this.collection.categories.find(category => category.id === card.categoryId);
+            const favoriteImage = this.data.favoriteCards.includes(card.id) ? './assets/img/heart-solid.svg' : './assets/img/heart-regular.svg';
 
-    const firstItem = (currentPage * cardsPerPage) - cardsPerPage;
-    const lastItem  = firstItem + cardsPerPage;
-
-    selectedCards
-        .slice(firstItem, lastItem)
-        .forEach(card => appendCard(targetElement, card));
-}
-
-function appendCard(targetElement, card) {
-    const template = cardTemplate(card);
-    const html     = document.createElement('div');
-    html.className = 'card-holder';
-    html.innerHTML = template;
-    targetElement.appendChild(html);
-}
-
-function renderMenuItems() {
-    const targetElement     = getClearedElementById('main-nav');
-    const numberOfMenuItems = Math.ceil(selectedCards.length / cardsPerPage);
-
-    for (let i = 1; i <= numberOfMenuItems; i++) {
-        const menuItem = {
-            id: i,
-            title: `Page ${i}`,
-            active: i === currentPage,
-        };
-        menuItems.push(menuItem);
-        const element = appendMenuItem(targetElement, menuItem);
-        element.addEventListener('click', handleMenuClick);
-    }
-}
-
-function appendMenuItem(targetElement, menuItem) {
-    const className = menuItem.active ? 'active' : '';
-    const template  = `<a href="#" title="View ${menuItem.title}" data-page="${menuItem.id}" class="${className}">${menuItem.title}</a>`;
-    const li        = document.createElement('li');
-    li.innerHTML    = template;
-    return targetElement.appendChild(li);
-}
-
-function renderCategories() {
-    const targetElement = getClearedElementById('categories');
-    categories.forEach(function (category, index) {
-        const element = appendCategory(targetElement, index, category);
-        element.addEventListener('change', handleCategoryChange);
-    });
-}
-
-function appendCategory(targetElement, index, category) {
-    const checkbox = checkboxTemplate(index, category);
-    const html     = document.createElement('div');
-    html.className = 'checkbox shadow rounded bg-white';
-    html.innerHTML = checkbox;
-    return targetElement.appendChild(html);
-}
-
-function cardTemplate(card) {
-    const category = categories[card.categoryId];
-    return `<div class="card shadow rounded bg-white" data-id="${card.id}">
-            <img src="https://picsum.photos/300/150" alt="placeholder">
+            return `
+            <div class="image">
+                <img src="${card.img}" alt="${card.title}">
+            </div>
             <div class="content">
                 <span class="number bg-gray">${card.id}</span>
                 <div class="content-inner">
                     <h3>${card.title}</h3>
                 </div>
                 <div class="category bg-gray">
-                    ${category}
+                    ${category.title}
+                    <button class="favorite" title="Like!" value="${card.id}">
+                        <img src="${favoriteImage}" alt="Like!">
+                    </button>
                 </div>
             </div>
-        </div>`;
-}
+        `;
+        },
+        checkboxTemplate(value, label, checked) {
+            checked = checked ? 'checked' : '';
 
-function checkboxTemplate(index, title) {
-    return `<label for="category-${index}">
-       <input type="checkbox" value="${index}" id="category-${index}">
-       ${title}
-    </label>`;
-}
+            return `<label for="checkbox-${value}">
+               <input type="checkbox" value="${value}" id="checkbox-${value}" ${checked}>
+               ${label}
+            </label>`;
+        },
+        onMenuClick(e) {
+            this.setCurrentPage(e.target.getAttribute('data-page'));
+        },
+        onCategoryChange() {
+            const selectedCategories = [];
+            const inputs = document.getElementById('categories').getElementsByTagName('input');
 
-function handleMenuClick(e) {
-    setCurrentPage(e.target.getAttribute('data-page'));
-}
+            Array.prototype.slice.call(inputs).forEach(input => input.checked ? selectedCategories.push(parseInt(input.value)) : null);
 
-function handleCategoryChange() {
-    selectedCategories = [];
+            this.updateData('selectedCategories', selectedCategories);
+            this.setCurrentPage(1);
+            this.redraw();
+        },
+        onFavoriteChange(e) {
+            this.updateData('filterFavorites', e.target.checked);
+            this.setCurrentPage(1);
+            this.redraw();
+        },
+        onCollectionChange(e) {
+            this.currentCollection = e.target.value;
+            window.localStorage.setItem('currentCollection', this.currentCollection);
+            this.init();
+        },
+        onSortChange(e) {
+            const sort = e.target.value.split('_');
 
-    const inputs = document.getElementById('categories').getElementsByTagName('input');
+            this.updateData('sortField', sort[0]);
+            this.updateData('sortDirection', sort[1]);
 
-    Array.prototype.slice.call(inputs).forEach(function (input) {
-        if (input.checked) {
-            selectedCategories[input.value] = input.value;
-        }
-    });
-    setCurrentPage(1);
-    redraw();
-}
+            this.setCurrentPage(1);
+            this.redraw();
+        },
+        searchItems(e) {
+            this.searchTerm = e.target.value;
+            this.setCurrentPage(1);
+            this.redraw();
+        },
+        toggleFavorite(id) {
+            let favoriteCards = this.data.favoriteCards;
+            id = parseInt(id);
 
-function handleSortChange() {
-    sortDirection = document.getElementById('sort').value;
-    setCurrentPage(1);
-    redraw();
-}
+            if (favoriteCards.includes(id)) {
+                favoriteCards = favoriteCards.filter(e => e !== id)
+            } else {
+                favoriteCards.push(id);
+            }
 
-function redraw() {
-    selectCards();
-    setPageTitle();
-    renderMenuItems();
-}
+            this.updateData('favoriteCards', favoriteCards);
 
-init();
+            this.redraw();
+        },
+        debounce(func, timeout = 3000) {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    func.apply(this, args);
+                }, timeout);
+            };
+        },
+    }
+
+    window.collection = collection;
+    window.collection.init();
+
+})();

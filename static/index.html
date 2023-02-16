@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Page 1 - Books</title>
+    <title>Collections</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./assets/app.css">
-    <link rel="icon" type="image/x-icon" href="./assets/logo.png">
+    <link rel="stylesheet" href="./assets/app.css?v=7">
 </head>
 <body>
 
 <header class="shadow bg-white">
     <div class="container">
         <a href="#" id="logo">
-            <img src="./assets/logo.png" alt="Books Logo" height="32" />
-            <span>Books</span>
+            <img id="logo-image" src="" alt="Logo" height="32" />
+            <span id="page-title">Collections</span>
         </a>
         <nav>
             <ul id="main-nav"></ul>
@@ -26,23 +26,31 @@
 <main>
     <div class="container">
         <div id="filterbar">
-            <div id="categories"></div>
+            <select id="collections" class="shadow rounded"></select>
+            <div id="search">
+                <input type="search" id="search-field" class="rounded shadow" placeholder="Search...">
+            </div>
+            <div id="favorites"></div>
             <select id="sort" class="shadow rounded">
-                <option value="asc">Sort ascending</option>
-                <option value="desc">Sort descending</option>
+                <option value="title_asc">Sort by title ascending</option>
+                <option value="title_desc">Sort by title descending</option>
+                <option value="id_asc">Sort by id ascending</option>
+                <option value="id_desc">Sort by id descending</option>
             </select>
         </div>
+
+        <div id="categories"></div>
         <div id="cards"></div>
     </div>
 </main>
 
 <footer>
     <div class="container">
-        <p>© 2023 Martijn van Nieuwenhoven</p>
+        <p id="footer-text">© Owner</p>
     </div>
 </footer>
 
-<script src="./assets/app.js"></script>
+<script src="./assets/app.js?v=7"></script>
 
 </body>
 </html>
