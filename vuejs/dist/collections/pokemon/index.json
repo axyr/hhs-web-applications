@@ -1,0 +1,160 @@
+{
+  "name": "Pokemon",
+  "owner": "Pieter van Nieuwenhoven",
+  "logo": "/collections/pokemon/assets/logo.png",
+  "categories": [
+    {
+      "id": 1,
+      "title": "Green",
+      "itemCount": 0
+    },
+    {
+      "id": 2,
+      "title": "Yellow",
+      "itemCount": 0
+    },
+    {
+      "id": 3,
+      "title": "Orange",
+      "itemCount": 0
+    },
+    {
+      "id": 4,
+      "title": "Blue",
+      "itemCount": 0
+    },
+    {
+      "id": 5,
+      "title": "Purple",
+      "itemCount": 0
+    }
+  ],
+  "items": [
+    {
+      "id": 22,
+      "title": "Armaldo",
+      "img": "/collections/pokemon/images/armaldo.webp",
+      "categoryId": 3
+    },
+    {
+      "id": 21,
+      "title": "Dark Celebi",
+      "img": "/collections/pokemon/images/dark-celebi-hidden-legends-hl-4.webp",
+      "categoryId": 1
+    },
+    {
+      "id": 20,
+      "title": "Elgyem",
+      "img": "/collections/pokemon/images/elgyem.webp",
+      "categoryId": 5
+    },
+    {
+      "id": 19,
+      "title": "Gardevoir",
+      "img": "/collections/pokemon/images/gardevoir.webp",
+      "categoryId": 5
+    },
+    {
+      "id": 18,
+      "title": "Keldeo",
+      "img": "/collections/pokemon/images/keldeo.webp",
+      "categoryId": 4
+    },
+    {
+      "id": 17,
+      "title": "Kirlia",
+      "img": "/collections/pokemon/images/kirlia.webp",
+      "categoryId": 5
+    },
+    {
+      "id": 16,
+      "title": "Lanturn",
+      "img": "/collections/pokemon/images/lanturn.webp",
+      "categoryId": 2
+    },
+    {
+      "id": 14,
+      "title": "Misdreavus",
+      "img": "/collections/pokemon/images/misdreavus.webp",
+      "categoryId": 5
+    },
+    {
+      "id": 13,
+      "title": "Mismagius",
+      "img": "/collections/pokemon/images/mismagius.webp",
+      "categoryId": 5
+    },
+    {
+      "id": 12,
+      "title": "Ninetales",
+      "img": "/collections/pokemon/images/ninetales.webp",
+      "categoryId": 3
+    },
+    {
+      "id": 11,
+      "title": "Palossand",
+      "img": "/collections/pokemon/images/palossand.webp",
+      "categoryId": 3
+    },
+    {
+      "id": 10,
+      "title": "Pikachu",
+      "img": "/collections/pokemon/images/pikachu.webp",
+      "categoryId": 2
+    },
+    {
+      "id": 9,
+      "title": "Sandygast",
+      "img": "/collections/pokemon/images/sandygast.webp",
+      "categoryId": 3
+    },
+    {
+      "id": 8,
+      "title": "Relicanth",
+      "img": "/collections/pokemon/images/relicanth.webp",
+      "categoryId": 4
+    },
+    {
+      "id": 7,
+      "title": "Arcanine",
+      "img": "/collections/pokemon/images/arcanine.webp",
+      "categoryId": 3
+    },
+    {
+      "id": 6,
+      "title": "Stunfisk",
+      "img": "/collections/pokemon/images/stunfisk.webp",
+      "categoryId": 2
+    },
+    {
+      "id": 5,
+      "title": "Sunflora",
+      "img": "/collections/pokemon/images/sunflora.webp",
+      "categoryId": 1
+    },
+    {
+      "id": 4,
+      "title": "Ursaluna V",
+      "img": "/collections/pokemon/images/ursaluna_v.webp",
+      "categoryId": 3
+    },
+    {
+      "id": 3,
+      "title": "Venomoth",
+      "img": "/collections/pokemon/images/venomoth.webp",
+      "categoryId": 1
+    },
+    {
+      "id": 2,
+      "title": "Venonat",
+      "img": "/collections/pokemon/images/venonat.webp",
+      "categoryId": 1
+    },
+    {
+      "id": 1,
+      "title": "Wailord",
+      "img": "/collections/pokemon/images/wailord.webp",
+      "categoryId": 4
+    }
+  ]
+}
