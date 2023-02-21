@@ -17,5 +17,6 @@ module.exports = {
     "vue/no-mutating-props": "off",
     "no-prototype-builtins": "off",
     "no-extra-boolean-cast": "off",
+    "multiline-ternary": ["error", "never"],
   },
 };

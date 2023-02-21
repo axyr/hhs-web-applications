@@ -22,9 +22,7 @@ const props = defineProps({
 });
 
 const favoriteImage = computed(() => {
-  return props.item.isFavorite
-    ? "/assets/img/heart-solid.svg"
-    : "/assets/img/heart-regular.svg";
+  return props.item.isFavorite? "/assets/img/heart-solid.svg": "/assets/img/heart-regular.svg";
 });
 
 const favoriteTitle = computed(() => {

@@ -69,9 +69,7 @@ watch(
 );
 
 function setCollectionFromRoute(route) {
-  data.currentCollection = route.params.collection
-    ? route.params.collection
-    : data.currentCollection;
+  data.currentCollection = route.params.collection? route.params.collection: data.currentCollection;
 }
 
 function fetchCollection() {
@@ -145,9 +143,7 @@ function filterItems() {
         item.title.toLowerCase().includes(data.search.term.toLowerCase())
     )
     .sort((a, b) => {
-      return typeof a[sortField] === "string"
-        ? a[sortField].localeCompare(b[sortField])
-        : a[sortField] > b[sortField];
+      return typeof a[sortField] === "string"? a[sortField].localeCompare(b[sortField]): a[sortField] > b[sortField];
     });
 
   if (sortDirection === "desc") {
@@ -158,18 +154,12 @@ function filterItems() {
 function setSearchFromQuery() {
   data.search = {
     page: route.query.page ? parseInt(route.query.page) : data.search.page,
-    perPage: route.query.perPage
-      ? parseInt(route.query.perPage)
-      : data.search.perPage,
+    perPage: route.query.perPage? parseInt(route.query.perPage): data.search.perPage,
     sort: route.query.sort ? route.query.sort : data.search.sort,
     term: route.query.term ? route.query.term : data.search.term,
-    favorites: route.query.favorites
-      ? route.query.favorites === "true"
-      : data.search.favorites,
+    favorites: route.query.favorites? route.query.favorites === "true": data.search.favorites,
     categories:
-      typeof route.query.categories === "string"
-        ? route.query.categories.split(",").map((id) => parseInt(id, 10))
-        : [],
+      typeof route.query.categories === "string"? route.query.categories.split(",").map((id) => parseInt(id, 10)): [],
   };
 
   filterItems();
@@ -196,6 +186,7 @@ function onApplySearch(search) {
 function onChangePage(page) {
   data.search.page = page;
   router.replace({ query: data.search });
+  globalStore.setMetaTitle(`Page ${page}`);
 }
 
 function onChangePerPage(perPage) {
