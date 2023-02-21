@@ -1,16 +1,52 @@
 <script setup>
 
+import {computed} from 'vue';
+import {useGlobalStore} from '@/stores/global.js';
+import {useRoute, useRouter} from 'vue-router';
+
+const globalStore = useGlobalStore();
+const route = useRoute();
+const router = useRouter();
+
+const menuItems = computed(() => {
+    const menuItems = [];
+
+    for (const [key, collection] of Object.entries(globalStore.collections)) {
+        menuItems.push({
+            collection: key,
+            title: collection.title,
+            class: key === route.params.collection ? 'active' : '',
+        });
+    }
+
+    return menuItems;
+});
+
+function goHome() {
+    router.push({name: 'home'});
+}
+
+function goToCollection(collection) {
+    router.push({name: 'collections', params: {collection}});
+}
+
 </script>
 
 <template>
     <header class="shadow bg-white">
         <div class="container">
-            <a href="#" id="logo">
-                <img src="./../../public/assets/logo.png" alt="Books Logo" height="32" />
-                <span>Books</span>
+            <a href="#" id="logo" @click="goHome">
+                <img v-if="globalStore.logo" :src="globalStore.logo" :alt="globalStore.title" height="32" />
+                <span>{{ globalStore.title }}</span>
             </a>
             <nav>
-                <ul id="main-nav"></ul>
+                <ul id="main-nav">
+                    <li v-for="item in menuItems" :key="item.collection">
+                        <a href="#" :class="item.class" @click="goToCollection(item.collection)">
+                            {{ item.title }}
+                        </a>
+                    </li>
+                </ul>
             </nav>
         </div>
     </header>
@@ -38,9 +74,9 @@ header .container {
     font-size: 1.5rem;
 }
 
-#logo span{
+#logo span {
     position: relative;
-    top:-0.6rem;
+    top: -0.6rem;
     margin-left: 0.5rem;
 }
 

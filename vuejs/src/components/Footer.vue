@@ -1,17 +1,14 @@
 <script setup>
-import {reactive} from "vue";
+import {useGlobalStore} from '@/stores/global.js';
 
-const data = reactive({
-    year: new Date().getFullYear(),
-    name: 'Martijn van Nieuwenhoven'
-});
+const globalStore = useGlobalStore();
 
 </script>
 
 <template>
     <footer>
         <div class="container">
-            <p>© {{ data.year }} {{ data.name }}</p>
+            <p>{{ globalStore.footerLine }}</p>
         </div>
     </footer>
 </template>

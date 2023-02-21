@@ -181,7 +181,7 @@ select {
     display: block;
     width: 100%;
     min-height: 300px;
-    object-fit: cover; /* or object-fit: contain; */
+    object-fit: cover;
 }
 
 .card .content {

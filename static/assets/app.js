@@ -143,7 +143,7 @@
                 .filter(item => !Object.keys(this.data.selectedCategories).length || this.data.selectedCategories.includes(item.categoryId))
                 .filter(item => !this.data.filterFavorites || this.data.favoriteCards.includes(item.id))
                 .filter(item => !this.searchTerm || item.title.toLowerCase().includes(this.searchTerm.toLowerCase()))
-                .sort((a, b) => (a[this.data.sortField] > b[this.data.sortField]) ? low : high);
+                .sort((a, b) => a[this.data.sortField] > b[this.data.sortField] ? low : high);
 
             this.renderCards();
         },
