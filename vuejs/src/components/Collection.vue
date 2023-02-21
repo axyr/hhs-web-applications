@@ -7,20 +7,21 @@ import {useRoute, useRouter} from 'vue-router';
 import CollectionCard from './CollectionCard.vue';
 import CollectionSearch from './CollectionSearch.vue';
 import Pagination from './Pagination.vue';
+import ItemForm from './ItemForm.vue';
 
 const globalStore = useGlobalStore();
 const route = useRoute();
 const router = useRouter();
 
 const data = reactive({
-    collection: {
-        name: 'Collections',
-        owner: 'Martijn van Nieuwenhoven',
-        logo: null,
-        items: [],
-        categories: [],
-    },
     currentCollection: 'books',
+    name: 'Collections',
+    owner: 'Martijn van Nieuwenhoven',
+    logo: null,
+    categories: [],
+    items: [],
+    favoriteItems: [],
+    filteredItems: [],
     search: {},
     searchDefaults: {
         page: 1,
@@ -30,9 +31,9 @@ const data = reactive({
         favorites: false,
         categories: [],
     },
-    favoriteItems: [],
-    filteredItems: [],
 });
+
+const totalItems = computed(() => Object.entries(data.filteredItems).length);
 
 const paginatedItems = computed(() => {
     const firstItem = (data.search.page * data.search.perPage) - data.search.perPage;
@@ -41,16 +42,31 @@ const paginatedItems = computed(() => {
     return data.filteredItems.slice(firstItem, lastItem);
 });
 
+const nextId = computed(() => {
+    return data.items.reduce((a, b) => a.id > b.id ? a : b).id + 1;
+});
+
 onMounted(() => {
-    data.currentCollection = route.params.collection ? route.params.collection : data.currentCollection;
+    setCollectionFromRoute(route);
     fetchCollection();
 });
 
-watch(route, (to) => {
-    data.currentCollection = to.params.collection ? to.params.collection : data.currentCollection;
-    fetchCollection();
+watch(route, (from, to) => {
+    if (from.params.collection !== to.params.collection) {
+        setCollectionFromRoute(to);
+        fetchCollection();
+    }
+
     setSearchFromQuery();
 });
+
+watch(data.items, () => {
+    filterItems();
+}, {deep: true});
+
+function setCollectionFromRoute(route) {
+    data.currentCollection = route.params.collection ? route.params.collection : data.currentCollection;
+}
 
 function fetchCollection() {
     fetch(globalStore.collections[data.currentCollection].url).then(response => {
@@ -58,8 +74,13 @@ function fetchCollection() {
     }).catch(() => {
         console.log('Could not load items.');
     }).then(json => {
-        data.collection = json;
-        data.collection.items.forEach(function (item) {
+        data.name = json.name;
+        data.owner = json.owner;
+        data.logo = json.logo;
+        data.categories = json.categories;
+        data.items = json.items;
+
+        data.items.forEach(function (item) {
             setCategoryTotalsAndItemCategory(item);
             setItemIsFavorite(item);
         });
@@ -71,7 +92,7 @@ function fetchCollection() {
 }
 
 function setCategoryTotalsAndItemCategory(item) {
-    data.collection.categories.forEach(function (category) {
+    data.categories.forEach(function (category) {
         if (item.categoryId === category.id) {
             category.itemCount++;
             item.category = category;
@@ -88,9 +109,9 @@ function resetSearch() {
 }
 
 function updateGlobalStore() {
-    globalStore.setLogo(data.collection.logo);
-    globalStore.setWebsiteTitle(data.collection.name);
-    globalStore.setWebsiteOwner(data.collection.owner);
+    globalStore.setLogo(data.logo);
+    globalStore.setWebsiteTitle(data.name);
+    globalStore.setWebsiteOwner(data.owner);
     globalStore.setMetaTitle('Page 1');
 }
 
@@ -98,14 +119,20 @@ function filterItems() {
     const sort = data.search.sort.split(':');
     const sortField = sort[0];
     const sortDirection = sort[1];
-    const low = sortDirection === 'desc' ? -1 : 1;
-    const high = low * -1;
 
-    data.filteredItems = data.collection.items
+    data.filteredItems = data.items
         .filter(item => !data.search.categories.length || data.search.categories.includes(item.categoryId))
         .filter(item => data.search.favorites !== true || data.favoriteItems.includes(item.id))
         .filter(item => !data.search.term || item.title.toLowerCase().includes(data.search.term.toLowerCase()))
-        .sort((a, b) => (a[sortField] > b[sortField]) ? low : high);
+        .sort((a, b) => {
+            return typeof a[sortField] === 'string'
+                ? a[sortField].localeCompare(b[sortField])
+                : a[sortField] > b[sortField];
+        });
+
+    if (sortDirection === 'desc') {
+        data.filteredItems.reverse();
+    }
 }
 
 function setSearchFromQuery() {
@@ -122,12 +149,16 @@ function setSearchFromQuery() {
 }
 
 function onApplySearch(search) {
-    search.categories = search.categories.join(',');
+    if (typeof search.categories === 'string') {
+        search.categories = search.categories.join(',');
+    }
 
     search = Object.fromEntries(Object.entries(search).filter(([_, v]) => v != null && v !== "" && v !== false));
+
     if (search.page * search.perPage > data.filteredItems.length) {
         search.page = 1;
     }
+
     router.replace({query: search});
 }
 
@@ -150,8 +181,17 @@ function onToggleFavorite(item) {
     }
 
     setItemIsFavorite(item);
+    filterItems();
 }
 
+function onAddItem(item) {
+
+    item.id = nextId.value;
+    setCategoryTotalsAndItemCategory(item);
+    data.items.push(item);
+
+    filterItems();
+}
 </script>
 
 <template :key="data.currentCollection">
@@ -159,15 +199,16 @@ function onToggleFavorite(item) {
 
         <CollectionSearch
             :search="data.search"
-            :categories="data.collection.categories"
+            :categories="data.categories"
             :favoriteItems="data.favoriteItems"
             @applySearch="onApplySearch"
         />
 
         <Pagination
+            v-if="data.filteredItems.length"
             :page="data.search.page"
-            :per-page="data.search.perPage"
-            :total-items="data.filteredItems.length"
+            :perPage="data.search.perPage"
+            :totalItems="totalItems"
             @changePage="onChangePage"
             @changePerPage="onChangePerPage"
         />
@@ -183,11 +224,19 @@ function onToggleFavorite(item) {
         </div>
 
         <Pagination
+            v-if="data.filteredItems.length"
             :page="data.search.page"
-            :per-page="data.search.perPage"
-            :total-items="data.filteredItems.length"
+            :perPage="data.search.perPage"
+            :totalItems="totalItems"
             @changePage="onChangePage"
             @changePerPage="onChangePerPage"
         />
+
+        <ItemForm
+            :categories="data.categories"
+            :items="data.items"
+            @add-item="onAddItem"
+        />
+
     </div>
 </template>

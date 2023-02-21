@@ -93,11 +93,13 @@ function categoryIsSelected(category) {
                     </label>
                 </div>
             </div>
-            <select id="sort" class="shadow rounded" v-model="search.sort" @change="applySearch">
-                <option v-for="sortOption in sortOptions" :value="sortOption.value" :selected="sortOption.selected">
-                    {{ sortOption.label }}
-                </option>
-            </select>
+            <div>
+                <select id="sort" class="shadow rounded" v-model="search.sort" @change="applySearch">
+                    <option v-for="sortOption in sortOptions" :value="sortOption.value" :selected="sortOption.selected">
+                        {{ sortOption.label }}
+                    </option>
+                </select>
+            </div>
         </div>
         <div id="categories">
             <div v-for="category in categories" class="checkbox shadow rounded bg-white">
@@ -132,46 +134,6 @@ function categoryIsSelected(category) {
     padding-right: 1rem;
 }
 
-#per-page {
-    margin-left: 1rem;
-}
-
-input {
-    padding: 0.5rem;
-    border: none;
-    outline: none;
-    background-color: #fff;
-}
-
-input[type=text], input[type=search] {
-    width: 100%;
-}
-
-.checkbox {
-    display: inline-block;
-    padding: 0.5rem;
-    margin: 0 1rem 1rem 0;
-}
-
-.checkbox label {
-    cursor: pointer;
-    display: block;
-}
-
-.checkbox label input {
-    vertical-align: middle;
-    position: relative;
-    margin-top: -0.2rem;
-}
-
-select {
-    border: none;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    max-height: 2.5rem;
-    cursor: pointer;
-    color: #101827;
-}
 
 @media only screen and (max-width: 768px) {
 
@@ -182,17 +144,6 @@ select {
 
     #search {
         padding-bottom: 2rem;
-        width: 100%;
-    }
-
-    #search input {
-        padding: 0.5rem 1rem;
-    }
-
-    select {
-        padding: 0.5rem 1rem;
-        line-height: 1rem;
-        max-height: none;
         width: 100%;
     }
 

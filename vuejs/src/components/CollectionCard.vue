@@ -121,6 +121,8 @@ function toggleFavorite(item) {
     cursor: pointer;
     margin-right: 1rem;
     position: relative;
+    padding: 0;
+    box-shadow: none;
 }
 
 .card .content .favorite img {
@@ -145,5 +147,15 @@ function toggleFavorite(item) {
         max-width: 100%;
         height: auto;
     }
+
 }
+
+
+@media only screen and (max-width: 639px) {
+
+    .card img {
+        width: 50%;
+    }
+}
+
 </style>

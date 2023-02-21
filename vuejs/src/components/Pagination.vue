@@ -68,15 +68,17 @@ function goToNextPage() {
 
 <template>
     <div class="pagination">
-        <div>
+        <div class="item-info">
             <span>
                 Showing {{ firstItem }} to {{ lastItem }} of {{ props.totalItems }} results -
             </span>
-            <select id="per-page" class="shadow rounded" @change="changePerPage">
-                <option v-for="perPageOption in perPageOptions" :value="perPageOption" :selected="perPageOption === props.perPage">
-                    {{ perPageOption }}
-                </option>
-            </select> Items per page
+            <div>
+                <select id="per-page" class="shadow rounded" @change="changePerPage">
+                    <option v-for="perPageOption in perPageOptions" :value="perPageOption" :selected="perPageOption === props.perPage">
+                        {{ perPageOption }}
+                    </option>
+                </select> Items per page
+            </div>
         </div>
         <div>
             <ul>
@@ -103,13 +105,23 @@ function goToNextPage() {
 <style scoped>
 
 .pagination {
-    margin: 1rem auto;
+    margin-bottom: 1rem;
     display: flex;
     justify-content: space-between;
 }
 
-.pagination > div > select {
+.pagination > div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pagination > div > span {
+    margin: 1rem 1rem 0 0;
+}
+
+.pagination select {
     margin: 0.5rem 0 0 0;
+    width: auto;
 }
 
 ul {
@@ -124,16 +136,18 @@ li {
     margin: 0.5rem;
 }
 
-button {
-    border: none;
-    border-radius: 0.5rem;
-    box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
-    background-color: #fff;
-    padding: 0.5rem 1rem;
+button:disabled {
+    cursor: text;
 }
 
-button:not([disabled]) {
-    cursor: pointer;
-}
+@media only screen and (max-width: 768px) {
+    .pagination {
+        justify-content: center;
+        align-items: center;
+    }
 
+    .pagination .item-info {
+        display: none;
+    }
+}
 </style>
