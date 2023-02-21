@@ -1,17 +1,15 @@
 <script setup>
-
-import Header from './components/Header.vue';
-import Footer from './components/Footer.vue';
-import Collection from './components/Collection.vue';
-
+import PageHeader from "./components/PageHeader.vue";
+import PageFooter from "./components/PageFooter.vue";
+import ItemCollection from "./components/ItemCollection.vue";
 </script>
 
 <template>
-    <Header />
+  <PageHeader />
 
-    <main>
-        <Collection />
-    </main>
+  <main>
+    <ItemCollection />
+  </main>
 
-    <Footer />
+  <PageFooter />
 </template>
