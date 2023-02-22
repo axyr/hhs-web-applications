@@ -166,7 +166,7 @@ function setSearchFromQuery() {
 }
 
 function onApplySearch(search) {
-    if (typeof search.categories === "string") {
+    if (typeof search.categories !== "string") {
         search.categories = search.categories.join(",");
     }
 
