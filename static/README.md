@@ -1,6 +1,6 @@
-# Collection Vuejs Web Application
+# Collection Web Application
 
-This is the vue js version of the Collection Web Application.
+This is the "static" version of the Collection Web Application.
 
 This version is written in plain HTMl, CSS and Javascript.
 
@@ -14,26 +14,3 @@ When you use PHPStorm or another intelij editor, you can open the index.html fil
 
 The reason that a hostname is required, is that javascript fetch() requires same site origin, which is not suppored when opening index.html with a system file path.
 
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
