@@ -6,7 +6,7 @@ This version is written in plain HTMl, CSS and Javascript.
 
 A live version of the application can be tested on:
 
-[https://hhs-web-applications.tcc.rocks/](https://hhs-web-applications.tcc.rocks/)
+[https://hhs-web-vue-applications.tcc.rocks/](https://hhs-web-vue-applications.tcc.rocks/)
 
 If you want to run this code locally, you will need to setup a local domain.
 
