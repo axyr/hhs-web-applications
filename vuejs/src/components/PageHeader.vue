@@ -26,7 +26,7 @@ function goHome() {
 }
 
 function goToCollection(collection) {
-  router.push({ name: "collections", params: { collection } });
+  router.push({ name: "collection", params: { collection } });
 }
 </script>
 
