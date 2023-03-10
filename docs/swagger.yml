@@ -1,0 +1,199 @@
+openapi: 3.0.1
+info:
+  title: Collections
+  description: Manage collections with a breeze
+  version: '0.1'
+servers:
+  - url: http://localhost:3000/api/v1
+paths:
+  /collections:
+    get:
+      description: Get a list of available collections
+      responses:
+        '200':
+          description: The list of collections
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Collection'
+    post:
+      description: Create a new collection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                owner:
+                  type: string
+                brandColor:
+                  type: string
+                name:
+                  type: string
+                logo:
+                  type: string
+            examples:
+              '0':
+                value: |-
+                  {
+                      "name": "Books",
+                      "owner": "Martijn van Nieuwenhoven",
+                      "logo": "/collections/books/assets/logo.png",
+                      "brandColor": "#0283ff"
+                  }
+      responses:
+        '201':
+          description: The newly created collection object
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Collection'
+  /collections/{id}:
+    get:
+      description: Get a single collection object
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the collection
+      responses:
+        '200':
+          description: The requested collection object
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Collection'
+        '404':
+          description: When the collection object is not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+              examples: { }
+    delete:
+      description: Delete a single collection object
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the collection
+      responses:
+        '204':
+          description: When successfully deleted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+              examples: { }
+        '404':
+          description: When the collection object is not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+              examples: { }
+    patch:
+      description: Update a single collection object
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the collection
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                owner:
+                  type: string
+                brandColor:
+                  type: string
+                name:
+                  type: string
+                logo:
+                  type: string
+            examples:
+              '0':
+                value: |-
+                  {
+                      "name": "Cars",
+                      "owner": "Sarah van Nieuwenhoven",
+                      "logo": "/collections/books/assets/logo.png",
+                      "brandColor": "#0f453"
+                  }
+      responses:
+        '200':
+          description: The updated collection object
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Collection'
+        '404':
+          description: When the collection object is not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+              examples: { }
+components:
+  schemas:
+    Collection:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The collection unique identifier.
+        name:
+          type: string
+          description: The collection name.
+        owner:
+          type: string
+          description: The collection owner name.
+        logo:
+          type: string
+          description: The relative path of the logo.
+        brandColor:
+          type: string
+          description: The brand color hex code. Example #ff0088.
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The category unique identifier.
+        title:
+          type: string
+          description: The category title.
+        collectionId:
+          type: integer
+          description: The collection unique identifier this category belongs to.
+        itemCount:
+          type: integer
+          description: The amount of items this category contains.
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The item unique identifier.
+        title:
+          type: string
+          description: The item title.
+        img:
+          type: string
+          description: The relative path of the image.
+        collectionId:
+          type: integer
+          description: The collection unique identifier this item belongs to.
+        categoryId:
+          type: integer
+          description: The category unique identifier this item belongs to.

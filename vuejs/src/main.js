@@ -1,34 +1,13 @@
-import { createApp } from "vue/dist/vue.esm-bundler";
-import { createRouter, createWebHistory } from "vue-router";
-import { createPinia } from "pinia";
-
-import App from "./App.vue";
-
-import "./assets/app.css";
-
-const routes = [
-  {
-    name: "home",
-    path: "/",
-    component: App,
-  },
-  {
-    name: "collection",
-    path: "/collection/:collection",
-    component: App,
-  },
-  {
-    path: "/:catchAll(.*)",
-    redirect: () => {
-      return { path: "/" };
-    },
-  },
-];
+import {createApp} from 'vue/dist/vue.esm-bundler';
+import {createRouter, createWebHistory} from 'vue-router';
+import {createPinia} from 'pinia';
+import routes from './routes/routes.js';
+import './assets/app.css';
 
 const router = createRouter({
-  history: createWebHistory(),
-  base: window.location.origin,
-  routes,
+    history: createWebHistory(),
+    base: window.location.origin,
+    routes,
 });
 
 const pinia = createPinia();
@@ -38,4 +17,4 @@ const app = createApp({});
 app.use(router);
 app.use(pinia);
 
-app.mount("#app");
+app.mount('#app');
