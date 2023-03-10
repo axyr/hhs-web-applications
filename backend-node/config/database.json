@@ -11,7 +11,8 @@
     "password": null,
     "database": ":memory:",
     "host": ":memory:",
-    "dialect": "sqlite"
+    "dialect": "sqlite",
+    "logging": false
   },
   "production": {
     "username": "root",

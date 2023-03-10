@@ -6,8 +6,6 @@ const consts = {
     HTTP_FORBIDDEN: 403,
     HTTP_NOT_FOUND: 404,
     HTTP_UNPROCESSABLE_ENTITY: 422,
-}
-
-export {
-    consts,
 };
+
+module.exports = consts;

@@ -1,6 +1,7 @@
-import './../framework/env.js';
-import express from 'express';
-import {router} from './../app/routes/api.js';
+require('./../framework/env.js');
+
+const express = require('express');
+const router = require('./../app/routes/api.js');
 
 const app = express();
 
@@ -16,8 +17,6 @@ app.start = (port) => {
     port = port || 3000;
 
     app.listen(port, () => console.log(`App listening on port ${port}`));
-}
+};
 
-export {
-    app
-}
+module.exports = app;

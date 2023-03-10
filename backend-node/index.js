@@ -1,3 +1,3 @@
-import {app} from './bootstrap/app.js';
+const app = require('./bootstrap/app.js');
 
 app.start();

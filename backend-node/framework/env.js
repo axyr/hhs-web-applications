@@ -1,5 +1,5 @@
-import * as path from 'path';
-import dotenv from 'dotenv';
+const path = require('path');
+const dotenv = require('dotenv');
 
 const file = process.env.NODE_ENV === 'test' ? '.env.testing' : '.env';
 

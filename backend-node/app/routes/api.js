@@ -1,4 +1,4 @@
-import {collections} from "../controllers/CollectionController";
+const collections = require('../controllers/CollectionController');
 
 const router = {
     init(app) {
@@ -12,6 +12,4 @@ const router = {
     }
 };
 
-export {
-    router,
-}
+module.exports = router;
