@@ -152,6 +152,10 @@ li {
     margin: 0.5rem;
 }
 
+li:last-of-type {
+    margin-right: 0;
+}
+
 button:disabled {
     cursor: text;
 }

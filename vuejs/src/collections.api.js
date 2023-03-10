@@ -15,3 +15,11 @@ export function getItems(collectionId) {
 export function storeItem(collectionId, item) {
     return api.post(`/collections/${collectionId}/items`, item);
 }
+
+export function deleteItem(id) {
+    return api.delete(`/items/${id}`);
+}
+
+export function updateItem(item) {
+    return api.patch(`/items/${item.id}`, item);
+}

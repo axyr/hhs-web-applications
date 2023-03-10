@@ -2,6 +2,7 @@
   "name": "Books",
   "owner": "Martijn van Nieuwenhoven",
   "logo": "/collections/books/assets/logo.png",
+  "brandColor": "#0283ff",
   "categories": [
     {
       "id": 1,

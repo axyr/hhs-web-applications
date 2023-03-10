@@ -7,6 +7,8 @@ const globalStore = useGlobalStore();
 const route = useRoute();
 const router = useRouter();
 
+const color = computed(() => globalStore.activeCollection ? globalStore.activeCollection.brandColor : '#0283ff');
+
 const menuItems = computed(() => {
     const items = [];
 

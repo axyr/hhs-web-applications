@@ -1,7 +1,7 @@
 <script setup>
 import {computed} from 'vue';
 
-const emit = defineEmits(['toggleFavorite']);
+const emit = defineEmits(['toggleFavorite', 'deleteItem', 'editItem']);
 
 const props = defineProps({
     item: {
@@ -29,9 +29,18 @@ const favoriteTitle = computed(() => {
     return props.item.isFavorite ? 'Mark as favorite!' : 'Remove from favorites!';
 });
 
-function toggleFavorite(item) {
-    emit('toggleFavorite', item);
+function toggleFavorite() {
+    emit('toggleFavorite', props.item);
 }
+
+function deleteItem() {
+    emit('deleteItem', props.item);
+}
+
+function editItem() {
+    emit('editItem', props.item);
+}
+
 </script>
 
 <template>
@@ -48,14 +57,32 @@ function toggleFavorite(item) {
             </div>
             <div class="category bg-gray">
                 {{ item.category.title }}
-                <button
-                    class="favorite"
-                    :title="favoriteTitle"
-                    :value="item.id"
-                    @click="toggleFavorite(item)"
-                >
-                    <img :src="favoriteImage" :alt="favoriteTitle" />
-                </button>
+
+                <div class="buttons">
+                    <button
+                        class="icon edit"
+                        title="Edit Item"
+                        @click="editItem"
+                    >
+                        <img src="/assets/img/pen-to-square.svg" alt="Edit Item" />
+                    </button>
+
+                    <button
+                        class="icon delete"
+                        title="Delete Item"
+                        @click="deleteItem"
+                    >
+                        <img src="/assets/img/times-circle.svg" alt="Delete Item" />
+                    </button>
+
+                    <button
+                        class="icon favorite"
+                        :title="favoriteTitle"
+                        @click="toggleFavorite"
+                    >
+                        <img :src="favoriteImage" :alt="favoriteTitle" />
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -118,7 +145,7 @@ function toggleFavorite(item) {
     justify-content: space-between;
 }
 
-.card .content .favorite {
+.card .content .icon {
     border: none;
     background: none;
     width: 1rem;
@@ -129,10 +156,14 @@ function toggleFavorite(item) {
     box-shadow: none;
 }
 
-.card .content .favorite img {
+.card .content .icon img {
     font-size: 1rem;
     position: relative;
     top: 0.2rem;
+}
+
+button:focus-visible {
+    outline: none;
 }
 
 @media only screen and (max-width: 480px) {

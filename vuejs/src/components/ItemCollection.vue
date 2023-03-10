@@ -2,12 +2,13 @@
 import {reactive, computed, watch, onMounted} from 'vue';
 import {useGlobalStore} from '@/stores/global.js';
 import {useRoute, useRouter} from 'vue-router';
-
 import CollectionCard from './CollectionCard.vue';
+import ModalPopup from './ModalPopup.vue';
 import CollectionSearch from './CollectionSearch.vue';
 import ItemPagination from './ItemPagination.vue';
 import ItemForm from './ItemForm.vue';
-import {getCategories, getCollections, getItems} from '@/collections.api.js';
+import FloatingButton from './FloatingButton.vue';
+import {getCategories, getCollections, getItems, deleteItem} from '@/collections.api.js';
 
 const globalStore = useGlobalStore();
 const route = useRoute();
@@ -22,6 +23,9 @@ const data = reactive({
     favoriteItems: [],
     filteredItems: [],
     search: {},
+    showItemForm: false,
+    itemToBeDeleted: null,
+    editingItem: null,
     searchDefaults: {
         page: 1,
         perPage: 5,
@@ -41,6 +45,9 @@ const paginatedItems = computed(() => {
 
     return data.filteredItems.slice(firstItem, lastItem);
 });
+
+const showItemForm = computed(() => globalStore.activeCollection && data.showItemForm);
+const showConfirmDelete = computed(() => data.itemToBeDeleted !== null);
 
 onMounted(async () => {
     await loadCollections();
@@ -185,11 +192,53 @@ function onToggleFavorite(item) {
     filterItems();
 }
 
+function onDeleteItem(item) {
+    data.itemToBeDeleted = item;
+}
+
+function onEditItem(item) {
+    data.editingItem = item;
+    data.showItemForm = true;
+}
+
 function onAddItem(item) {
     setCategoryTotalsAndItemCategory(item);
     data.items.push(item);
     filterItems();
 }
+
+function onUpdateItem(item) {
+    const index = data.items.findIndex(obj => obj.id === item.id);
+    data.items[index] = item;
+    console.log(item);
+
+    filterItems();
+}
+
+function onAddButtonClick() {
+    data.showItemForm = true;
+}
+
+function hideItemForm() {
+    data.editingItem = null;
+    data.showItemForm = false;
+}
+
+function hideConfirmDelete() {
+    data.itemToBeDeleted = null;
+}
+
+const deleteItemToBeDeleted = async () => {
+    try {
+        await deleteItem(data.itemToBeDeleted.id);
+        data.items = data.items.filter((item) => item.id !== data.itemToBeDeleted.id);
+        data.itemToBeDeleted = null;
+        filterItems();
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 </script>
 
 <template :key="data.currentCollection">
@@ -197,17 +246,17 @@ function onAddItem(item) {
         <CollectionSearch
             :search="data.search"
             :categories="data.categories"
-            :favoriteItems="data.favoriteItems"
-            @applySearch="onApplySearch"
+            :favorite-items="data.favoriteItems"
+            @apply-search="onApplySearch"
         />
 
         <ItemPagination
             v-if="data.filteredItems.length"
             :page="data.search.page"
-            :perPage="data.search.perPage"
-            :totalItems="totalItems"
-            @changePage="onChangePage"
-            @changePerPage="onChangePerPage"
+            :per-page="data.search.perPage"
+            :total-items="totalItems"
+            @change-page="onChangePage"
+            @change-per-page="onChangePerPage"
         />
 
         <div id="cards">
@@ -215,23 +264,56 @@ function onAddItem(item) {
                 v-for="(item, index) in paginatedItems"
                 :key="index"
                 :item="item"
-                @toggleFavorite="onToggleFavorite"
+                @toggle-favorite="onToggleFavorite"
+                @delete-item="onDeleteItem"
+                @edit-item="onEditItem"
             />
         </div>
 
         <ItemPagination
             v-if="data.filteredItems.length"
             :page="data.search.page"
-            :perPage="data.search.perPage"
-            :totalItems="totalItems"
-            @changePage="onChangePage"
-            @changePerPage="onChangePerPage"
+            :per-page="data.search.perPage"
+            :total-items="totalItems"
+            @change-page="onChangePage"
+            @change-per-page="onChangePerPage"
         />
 
-        <ItemForm
-            :categories="data.categories"
-            :items="data.items"
-            @add-item="onAddItem"
+        <FloatingButton
+            v-if="globalStore.activeCollection"
+            :color="globalStore.activeCollection.brandColor"
+            @click="onAddButtonClick"
         />
+
+        <ModalPopup
+            v-if="showItemForm"
+            @close="hideItemForm"
+            :title="data.editingItem ? 'Edit Item': 'Add Item'"
+            height="300px"
+        >
+            <template v-slot:body>
+                <ItemForm
+                    :categories="data.categories"
+                    :items="data.items"
+                    :editing-item="data.editingItem"
+                    @add-item="onAddItem"
+                    @update-item="onUpdateItem"
+                />
+            </template>
+        </ModalPopup>
+
+        <ModalPopup
+            v-if="showConfirmDelete"
+            @close="hideConfirmDelete"
+            @confirm="deleteItemToBeDeleted"
+            title="Delete item"
+            height="170px"
+            :show-confirm="true"
+        >
+            <template v-slot:body>
+                Are you sure you want to delete this item?
+                <br> {{ data.itemToBeDeleted.title }}
+            </template>
+        </ModalPopup>
     </div>
 </template>

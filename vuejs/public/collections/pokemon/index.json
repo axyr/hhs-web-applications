@@ -2,6 +2,7 @@
   "name": "Pokemon",
   "owner": "Pieter van Nieuwenhoven",
   "logo": "/collections/pokemon/assets/logo.png",
+  "brandColor": "#ff0088",
   "categories": [
     {
       "id": 1,

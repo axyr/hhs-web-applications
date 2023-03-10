@@ -1,11 +1,11 @@
 <script setup>
-import {reactive} from 'vue';
-import {storeItem} from '@/collections.api';
+import {computed, onMounted, reactive} from 'vue';
+import {storeItem as apiStoreItem, updateItem as apiUpdateItem} from '@/collections.api';
 import {useGlobalStore} from '@/stores/global.js';
 
 const globalStore = useGlobalStore();
 
-defineProps({
+const props = defineProps({
     items: {
         type: Array,
         required: true,
@@ -13,6 +13,10 @@ defineProps({
     categories: {
         type: Array,
         required: true,
+    },
+    editingItem: {
+        type: Object,
+        required: false,
     },
 });
 
@@ -27,34 +31,66 @@ const data = reactive({
         categoryId: '',
         img: '',
     },
+    message: null,
 });
 
-const emit = defineEmits(['addItem']);
+const color = computed(() => globalStore.activeCollection ? globalStore.activeCollection.brandColor : '#0283ff');
 
-function addItem() {
-    saveItem(data.item);
-    data.item = data.defaultItem;
+const emit = defineEmits(['addItem', 'updateItem']);
+
+onMounted(() => {
+    data.item = props.editingItem;
+});
+
+function submitForm() {
+    if (data.item.id) {
+        updateItem(data.item);
+    } else {
+        createItem(data.item);
+    }
 }
 
-const saveItem = async (item) => {
-    try {
-        const response = await storeItem(globalStore.activeCollection.id, item);
-        emit('addItem', response.data);
+function showMessage(message, timeout) {
+    data.message = message;
+    if (timeout) {
+        setTimeout(() => data.message = null, timeout);
+    }
+}
 
+const createItem = async (item) => {
+    try {
+        const response = await apiStoreItem(globalStore.activeCollection.id, item);
+        emit('addItem', response.data);
+        showMessage(`Item added: ${response.data.title}`, 2000);
+        data.item = data.defaultItem;
     } catch (error) {
-        console.error(error);
+        handleError(error);
     }
 };
+
+const updateItem = async (item) => {
+    try {
+        const response = await apiUpdateItem(item);
+        emit('updateItem', response.data);
+        showMessage(`Item updated: ${response.data.title}`, 2000);
+        data.item = response.data;
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+function handleError(error) {
+    console.error(error);
+    data.message = error;
+}
 </script>
 
 <template>
     <form
         role="form"
-        @submit.prevent="addItem"
+        @submit.prevent="submitForm"
         method="post"
-        class="shadow rounded bg-white"
     >
-        <h3>Add item</h3>
         <input
             type="text"
             v-model="data.item.title"
@@ -89,6 +125,12 @@ const saveItem = async (item) => {
             </option>
         </select>
         <button type="submit" class="shadow rounded">Save</button>
+        <div
+            class="message rounded"
+            v-if="data.message"
+        >
+            {{ data.message }}
+        </div>
     </form>
 </template>
 
@@ -96,17 +138,23 @@ const saveItem = async (item) => {
 form {
     display: flex;
     flex-direction: column;
-    padding: 1rem;
     margin: 1rem 0;
 }
 
-h3 {
-    margin-bottom: 1rem;
-}
-
 button {
-    background-color: #0083ff;
+    background-color: v-bind(color);
     border: none;
     color: #fff;
+}
+
+.message {
+    margin: 1rem 0;
+    padding: 0.5rem;
+    color: #fff;
+    background-color: #45B23DFF;
+}
+
+.message.warning {
+    background-color: #F32C31;
 }
 </style>
