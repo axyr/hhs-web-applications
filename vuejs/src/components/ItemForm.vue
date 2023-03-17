@@ -1,98 +1,161 @@
 <script setup>
-import { reactive } from "vue";
+import {computed, onMounted, reactive} from 'vue';
+import {storeItem as apiStoreItem, updateItem as apiUpdateItem} from '@/collections.api';
+import {useGlobalStore} from '@/stores/global.js';
 
-defineProps({
-  items: {
-    type: Array,
-    required: true,
-  },
-  categories: {
-    type: Array,
-    required: true,
-  },
+const globalStore = useGlobalStore();
+
+const props = defineProps({
+    items: {
+        type: Array,
+        required: true,
+    },
+    categories: {
+        type: Array,
+        required: true,
+    },
+    editingItem: {
+        type: Object,
+        required: false,
+    },
 });
 
 const data = reactive({
-  item: {
-    title: null,
-    categoryId: "",
-    img: "",
-  },
-  defaultItem: {
-    title: null,
-    categoryId: "",
-    img: "",
-  },
+    item: {
+        name: null,
+        categoryId: '',
+        img: '',
+    },
+    defaultItem: {
+        name: null,
+        categoryId: '',
+        img: '',
+    },
+    message: null,
 });
 
-const emit = defineEmits(["addItem"]);
+const color = computed(() => globalStore.activeCollection ? globalStore.activeCollection.brandColor : '#0283ff');
 
-function addItem() {
-  emit("addItem", data.item);
-  data.item = data.defaultItem;
+const emit = defineEmits(['addItem', 'updateItem']);
+
+onMounted(() => {
+    data.item = props.editingItem ? props.editingItem : data.defaultItem;
+});
+
+function submitForm() {
+    if (data.item.id) {
+        updateItem(data.item);
+    } else {
+        createItem(data.item);
+    }
+}
+
+function showMessage(message, timeout) {
+    data.message = message;
+    if (timeout) {
+        setTimeout(() => data.message = null, timeout);
+    }
+}
+
+const createItem = async (item) => {
+    try {
+        item.collectionId = globalStore.activeCollection.id;
+        const response = await apiStoreItem(item);
+        emit('addItem', response.data);
+        showMessage(`Item added: ${response.data.name}`, 2000);
+        data.item = data.defaultItem;
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+const updateItem = async (item) => {
+    try {
+        const response = await apiUpdateItem(item);
+        emit('updateItem', response.data);
+        showMessage(`Item updated: ${response.data.name}`, 2000);
+        data.item = response.data;
+    } catch (error) {
+        handleError(error);
+    }
+};
+
+function handleError(error) {
+    console.error(error);
+    data.message = error;
 }
 </script>
 
 <template>
-  <form
-    role="form"
-    @submit.prevent="addItem"
-    method="post"
-    class="shadow rounded bg-white"
-  >
-    <h3>Add item</h3>
-    <input
-      type="text"
-      v-model="data.item.title"
-      class="shadow rounded bg-white"
-      required
-      placeholder="Enter title.."
-    />
-    <select
-      name="category"
-      class="shadow rounded bg-white"
-      v-model="data.item.categoryId"
-      required
+    <form
+        role="form"
+        @submit.prevent="submitForm"
+        method="post"
     >
-      <option selected disabled value="">Select category</option>
-      <option
-        v-for="category in categories"
-        :value="category.id"
-        :key="category.id"
-      >
-        {{ category.title }}
-      </option>
-    </select>
-    <select
-      name="image"
-      v-model="data.item.img"
-      class="shadow rounded bg-white"
-      required
-    >
-      <option selected disabled value="">Select image</option>
-      <option v-for="item in items" :key="item.id">
-        {{ item.img }}
-      </option>
-    </select>
-    <button type="submit" class="shadow rounded">Save</button>
-  </form>
+        <input
+            type="text"
+            v-model="data.item.name"
+            class="shadow rounded bg-white"
+            required
+            placeholder="Enter name.."
+        />
+        <select
+            name="category"
+            class="shadow rounded bg-white"
+            v-model="data.item.categoryId"
+            required
+        >
+            <option selected disabled value="">Select category</option>
+            <option
+                v-for="category in categories"
+                :value="category.id"
+                :key="category.id"
+            >
+                {{ category.name }}
+            </option>
+        </select>
+        <select
+            name="image"
+            v-model="data.item.img"
+            class="shadow rounded bg-white"
+            required
+        >
+            <option selected disabled value="">Select image</option>
+            <option v-for="item in items" :key="item.id">
+                {{ item.img }}
+            </option>
+        </select>
+        <button type="submit" class="shadow rounded">Save</button>
+        <div
+            class="message rounded"
+            v-if="data.message"
+        >
+            {{ data.message }}
+        </div>
+    </form>
 </template>
 
 <style scoped>
 form {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  margin: 1rem 0;
-}
-
-h3 {
-  margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
 }
 
 button {
-  background-color: #0083ff;
-  border: none;
-  color: #fff;
+    background-color: v-bind(color);
+    border: none;
+    color: #fff;
+}
+
+.message {
+    margin: 1rem 0;
+    padding: 0.5rem;
+    color: #fff;
+    background-color: #45B23DFF;
+}
+
+.message.warning {
+    background-color: #F32C31;
 }
 </style>
