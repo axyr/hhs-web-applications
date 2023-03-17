@@ -29,7 +29,7 @@ const data = reactive({
     searchDefaults: {
         page: 1,
         perPage: 5,
-        sort: 'title:asc',
+        sort: 'name:asc',
         term: null,
         favorites: false,
         categories: [],
@@ -134,7 +134,7 @@ function filterItems() {
     data.filteredItems = data.items
         .filter((item) => !data.search.categories.length || data.search.categories.includes(item.categoryId))
         .filter((item) => data.search.favorites !== true || data.favoriteItems.includes(item.id))
-        .filter((item) => !data.search.term || item.title.toLowerCase().includes(data.search.term.toLowerCase()))
+        .filter((item) => !data.search.term || item.name.toLowerCase().includes(data.search.term.toLowerCase()))
         .sort((a, b) => typeof a[sortField] === 'string' ? a[sortField].localeCompare(b[sortField]) : a[sortField] > b[sortField]);
 
     if (sortDirection === 'desc') {
@@ -312,7 +312,7 @@ const deleteItemToBeDeleted = async () => {
         >
             <template v-slot:body>
                 Are you sure you want to delete this item?
-                <br> {{ data.itemToBeDeleted.title }}
+                <br> {{ data.itemToBeDeleted.name }}
             </template>
         </ModalPopup>
     </div>

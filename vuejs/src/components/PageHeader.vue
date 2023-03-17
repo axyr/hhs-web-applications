@@ -15,7 +15,7 @@ const menuItems = computed(() => {
     globalStore.collections.forEach(function (collection) {
         items.push({
             id: collection.id,
-            title: collection.name,
+            name: collection.name,
             class: collection.id === route.params.collection ? 'active' : '',
         });
     });
@@ -52,7 +52,7 @@ function goToCollection(collection) {
                             :class="item.class"
                             @click="goToCollection(item.id)"
                         >
-                            {{ item.title }}
+                            {{ item.name }}
                         </a>
                     </li>
                 </ul>

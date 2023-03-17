@@ -22,12 +22,12 @@ const props = defineProps({
 
 const data = reactive({
     item: {
-        title: null,
+        name: null,
         categoryId: '',
         img: '',
     },
     defaultItem: {
-        title: null,
+        name: null,
         categoryId: '',
         img: '',
     },
@@ -61,7 +61,7 @@ const createItem = async (item) => {
     try {
         const response = await apiStoreItem(globalStore.activeCollection.id, item);
         emit('addItem', response.data);
-        showMessage(`Item added: ${response.data.title}`, 2000);
+        showMessage(`Item added: ${response.data.name}`, 2000);
         data.item = data.defaultItem;
     } catch (error) {
         handleError(error);
@@ -72,7 +72,7 @@ const updateItem = async (item) => {
     try {
         const response = await apiUpdateItem(item);
         emit('updateItem', response.data);
-        showMessage(`Item updated: ${response.data.title}`, 2000);
+        showMessage(`Item updated: ${response.data.name}`, 2000);
         data.item = response.data;
     } catch (error) {
         handleError(error);
@@ -93,10 +93,10 @@ function handleError(error) {
     >
         <input
             type="text"
-            v-model="data.item.title"
+            v-model="data.item.name"
             class="shadow rounded bg-white"
             required
-            placeholder="Enter title.."
+            placeholder="Enter name.."
         />
         <select
             name="category"
@@ -110,7 +110,7 @@ function handleError(error) {
                 :value="category.id"
                 :key="category.id"
             >
-                {{ category.title }}
+                {{ category.name }}
             </option>
         </select>
         <select

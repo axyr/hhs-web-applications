@@ -11,9 +11,9 @@ const props = defineProps({
             return {
                 id: null,
                 img: null,
-                title: null,
+                name: null,
                 category: {
-                    title: null,
+                    name: null,
                 },
                 isFavorite: false,
             };
@@ -46,22 +46,22 @@ function editItem() {
 <template>
     <div class="card shadow rounded bg-white">
         <div class="image">
-            <img :src="item.img" :alt="item.title" />
+            <img :src="item.img" :alt="item.name" />
         </div>
         <div class="content">
       <span class="number bg-gray">
         {{ item.id }}
       </span>
             <div class="content-inner">
-                <h3>{{ item.title }}</h3>
+                <h3>{{ item.name }}</h3>
             </div>
             <div class="category bg-gray">
-                {{ item.category.title }}
+                {{ item.category.name }}
 
                 <div class="buttons">
                     <button
                         class="icon edit"
-                        title="Edit Item"
+                        name="Edit Item"
                         @click="editItem"
                     >
                         <img src="/assets/img/pen-to-square.svg" alt="Edit Item" />
@@ -69,7 +69,7 @@ function editItem() {
 
                     <button
                         class="icon delete"
-                        title="Delete Item"
+                        name="Delete Item"
                         @click="deleteItem"
                     >
                         <img src="/assets/img/times-circle.svg" alt="Delete Item" />
@@ -77,7 +77,7 @@ function editItem() {
 
                     <button
                         class="icon favorite"
-                        :title="favoriteTitle"
+                        :name="favoriteTitle"
                         @click="toggleFavorite"
                     >
                         <img :src="favoriteImage" :alt="favoriteTitle" />

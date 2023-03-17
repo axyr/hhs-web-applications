@@ -1,13 +1,23 @@
 const consts = require('../../framework/consts.js');
-const {Item} = require('../models');
+const {Item, Collection, Category} = require('../models');
 
 const items = {};
 
 items.index = async (req, res) => {
 
-    const items = await Item.findAll({raw: true, nest: true});
+    const collection = await Collection.findByPk(req.params.collectionId);
 
-    res.status(consts.HTTP_OK).json(items);
+    if (collection) {
+        const items = await collection.getItems({
+            include: {
+                model: Category, as: 'category'
+            }
+        });
+
+        return res.status(consts.HTTP_OK).json(items);
+    }
+
+    return res.status(consts.HTTP_NOT_FOUND).json();
 };
 
 items.create = async (req, res) => {
@@ -29,6 +39,7 @@ items.show = async (req, res) => {
 };
 
 items.update = async (req, res) => {
+
     const item = await Item.findByPk(req.params.id);
 
     if (item) {
@@ -42,6 +53,7 @@ items.update = async (req, res) => {
 };
 
 items.destroy = async (req, res) => {
+
     const item = await Item.findByPk(req.params.id);
 
     if (item) {

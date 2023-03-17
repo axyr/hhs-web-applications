@@ -2,8 +2,8 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": ":memory:",
-    "host": "database.sqlite",
+    "database": "database/database.sqlite",
+    "host": "database/database.sqlite",
     "dialect": "sqlite"
   },
   "test": {

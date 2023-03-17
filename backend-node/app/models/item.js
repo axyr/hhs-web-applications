@@ -5,15 +5,23 @@ const {
 module.exports = (sequelize, DataTypes) => {
     class Item extends Model {
         static associate(models) {
-            models.Item.belongsTo(models.Collection);
-            models.Item.belongsTo(models.Category);
+            models.Item.belongsTo(models.Collection, {
+                as: 'collection',
+                foreignKey: 'collectionId'
+            });
+            models.Item.belongsTo(models.Category, {
+                as: 'category',
+                foreignKey: 'categoryId'
+            });
         }
     }
 
     Item.init({
-        name: DataTypes.STRING
+        name: DataTypes.STRING,
+        img: DataTypes.STRING,
     }, {
         sequelize,
+        timestamps: false,
         modelName: 'Item',
     });
     return Item;

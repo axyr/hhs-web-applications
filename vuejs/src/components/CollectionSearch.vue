@@ -17,7 +17,7 @@ const props = defineProps({
     sortFields: {
         type: Array,
         default() {
-            return ['title', 'id'];
+            return ['name', 'id'];
         },
     },
     search: {
@@ -26,7 +26,7 @@ const props = defineProps({
             return {
                 page: 1,
                 perPage: 5,
-                sort: 'title:asc',
+                sort: 'name:asc',
                 term: null,
                 favorites: false,
                 categories: [],
@@ -144,7 +144,7 @@ function categoryIsSelected(category) {
                         :checked="categoryIsSelected(category)"
                         @change="toggleCategorySearch(category)"
                     />
-                    {{ category.title }} ({{ category.itemCount }})
+                    {{ category.name }} ({{ category.itemCount }})
                 </label>
             </div>
         </div>

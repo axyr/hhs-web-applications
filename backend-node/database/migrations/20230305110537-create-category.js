@@ -13,7 +13,7 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.INTEGER,
                 references: {
-                    model: 'Collection',
+                    model: 'Collections',
                     key: 'id',
                 },
                 onUpdate: 'CASCADE',
@@ -22,13 +22,9 @@ module.exports = {
             name: {
                 type: Sequelize.STRING
             },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                allowNull: false,
-                type: Sequelize.DATE
+            itemCount: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
             }
         });
     },

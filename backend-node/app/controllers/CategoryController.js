@@ -1,13 +1,17 @@
 const consts = require('../../framework/consts.js');
-const {Category} = require('../models');
+const {Category, Collection} = require('../models');
 
 const categories = {};
 
 categories.index = async (req, res) => {
 
-    const categories = await Category.findAll({raw: true, nest: true});
+    const collection = await Collection.findByPk(req.params.collectionId);
 
-    res.status(consts.HTTP_OK).json(categories);
+    if (collection) {
+        return res.status(consts.HTTP_OK).json(await collection.getCategories());
+    }
+
+    return res.status(consts.HTTP_NOT_FOUND).json();
 };
 
 categories.create = async (req, res) => {
