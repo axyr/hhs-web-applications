@@ -39,7 +39,7 @@ const color = computed(() => globalStore.activeCollection ? globalStore.activeCo
 const emit = defineEmits(['addItem', 'updateItem']);
 
 onMounted(() => {
-    data.item = props.editingItem;
+    data.item = props.editingItem ? props.editingItem : data.defaultItem;
 });
 
 function submitForm() {
@@ -59,7 +59,8 @@ function showMessage(message, timeout) {
 
 const createItem = async (item) => {
     try {
-        const response = await apiStoreItem(globalStore.activeCollection.id, item);
+        item.collectionId = globalStore.activeCollection.id;
+        const response = await apiStoreItem(item);
         emit('addItem', response.data);
         showMessage(`Item added: ${response.data.name}`, 2000);
         data.item = data.defaultItem;

@@ -12,8 +12,8 @@ export function getItems(collectionId) {
     return api.get(`/collections/${collectionId}/items`);
 }
 
-export function storeItem(collectionId, item) {
-    return api.post(`/collections/${collectionId}/items`, item);
+export function storeItem(item) {
+    return api.post(`/items`, item);
 }
 
 export function deleteItem(id) {
