@@ -11,7 +11,7 @@ categories.index = async (req, res) => {
         return res.status(consts.HTTP_OK).json(await collection.getCategories());
     }
 
-    return res.status(consts.HTTP_NOT_FOUND).json();
+    return res.status(consts.HTTP_NOT_FOUND).json({});
 };
 
 categories.create = async (req, res) => {
@@ -29,7 +29,7 @@ categories.show = async (req, res) => {
         return res.status(consts.HTTP_OK).json(category.toJSON());
     }
 
-    return res.status(consts.HTTP_NOT_FOUND).json();
+    return res.status(consts.HTTP_NOT_FOUND).json({});
 };
 
 categories.update = async (req, res) => {
@@ -42,7 +42,7 @@ categories.update = async (req, res) => {
         return res.status(consts.HTTP_OK).json(category.toJSON());
     }
 
-    return res.status(consts.HTTP_NOT_FOUND).json();
+    return res.status(consts.HTTP_NOT_FOUND).json({});
 };
 
 categories.destroy = async (req, res) => {

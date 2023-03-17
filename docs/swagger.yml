@@ -1,13 +1,22 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
   title: Collections
   description: Manage collections with a breeze
   version: '0.1'
 servers:
   - url: http://localhost:3000/api/v1
+tags:
+  - name: Collections
+    description: Operations for managing collections
+  - name: Categories
+    description: Operations for managing categories
+  - name: Items
+    description: Operations for managing items
 paths:
   /collections:
     get:
+      tags:
+        - Collections
       description: Get a list of available collections
       responses:
         '200':
@@ -19,6 +28,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Collection'
     post:
+      tags:
+        - Collections
       description: Create a new collection
       requestBody:
         content:
@@ -52,6 +63,8 @@ paths:
                 $ref: '#/components/schemas/Collection'
   /collections/{id}:
     get:
+      tags:
+        - Collections
       description: Get a single collection object
       parameters:
         - in: path
@@ -72,33 +85,11 @@ paths:
           content:
             application/json; charset=utf-8:
               schema:
-                type: string
-              examples: { }
-    delete:
-      description: Delete a single collection object
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: The unique identifier of the collection
-      responses:
-        '204':
-          description: When successfully deleted
-          content:
-            application/json; charset=utf-8:
-              schema:
-                type: string
-              examples: { }
-        '404':
-          description: When the collection object is not found
-          content:
-            application/json; charset=utf-8:
-              schema:
-                type: string
-              examples: { }
+                type: object
+                example: { }
     patch:
+      tags:
+        - Collections
       description: Update a single collection object
       parameters:
         - in: path
@@ -142,8 +133,346 @@ paths:
           content:
             application/json; charset=utf-8:
               schema:
-                type: string
-              examples: { }
+                type: object
+                example: { }
+    delete:
+      tags:
+        - Collections
+      description: Delete a single collection object
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the collection
+      responses:
+        '204':
+          description: When successfully deleted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: { }
+        '404':
+          description: When the collection object is not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+              example: { }
+  /collections/{id}/categories:
+    get:
+      tags:
+        - Categories
+      description: Get a list of available categories
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the collection
+      responses:
+        '200':
+          description: The list of categories
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+  /categories:
+    post:
+      tags:
+        - Categories
+      description: Create a new category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                owner:
+                  type: string
+                brandColor:
+                  type: string
+                name:
+                  type: string
+                logo:
+                  type: string
+            examples:
+              '0':
+                value: |-
+                  {
+                      "name": "Books",
+                      "owner": "Martijn van Nieuwenhoven",
+                      "logo": "/categories/books/assets/logo.png",
+                      "brandColor": "#0283ff"
+                  }
+      responses:
+        '201':
+          description: The newly created category object
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Category'
+  /categories/{id}:
+    get:
+      tags:
+        - Categories
+      description: Get a single category object
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the category
+      responses:
+        '200':
+          description: The requested category object
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: When the category object is not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: { }
+    patch:
+      tags:
+        - Categories
+      description: Update a single category object
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                owner:
+                  type: string
+                brandColor:
+                  type: string
+                name:
+                  type: string
+                logo:
+                  type: string
+            examples:
+              '0':
+                value: |-
+                  {
+                      "name": "Cars",
+                      "owner": "Sarah van Nieuwenhoven",
+                      "logo": "/categories/books/assets/logo.png",
+                      "brandColor": "#0f453"
+                  }
+      responses:
+        '200':
+          description: The updated category object
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: When the category object is not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: { }
+    delete:
+      tags:
+        - Categories
+      description: Delete a single category object
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the category
+      responses:
+        '204':
+          description: When successfully deleted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: { }
+        '404':
+          description: When the category object is not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+              example: { }
+  /collections/{id}/items:
+    get:
+      tags:
+        - Items
+      description: Get a list of available items
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the collection
+      responses:
+        '200':
+          description: The list of items
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+  /items:
+    post:
+      tags:
+        - Items
+      description: Create a new item
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                owner:
+                  type: string
+                brandColor:
+                  type: string
+                name:
+                  type: string
+                logo:
+                  type: string
+            examples:
+              '0':
+                value: |-
+                  {
+                      "name": "Books",
+                      "owner": "Martijn van Nieuwenhoven",
+                      "logo": "/items/books/assets/logo.png",
+                      "brandColor": "#0283ff"
+                  }
+      responses:
+        '201':
+          description: The newly created item object
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Item'
+  /items/{id}:
+    get:
+      tags:
+        - Items
+      description: Get a single item object
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the item
+      responses:
+        '200':
+          description: The requested item object
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: When the item object is not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: { }
+    patch:
+      tags:
+        - Items
+      description: Update a single item object
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the item
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                owner:
+                  type: string
+                brandColor:
+                  type: string
+                name:
+                  type: string
+                logo:
+                  type: string
+            examples:
+              '0':
+                value: |-
+                  {
+                      "name": "Cars",
+                      "owner": "Sarah van Nieuwenhoven",
+                      "logo": "/items/books/assets/logo.png",
+                      "brandColor": "#0f453"
+                  }
+      responses:
+        '200':
+          description: The updated item object
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: When the item object is not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: { }
+    delete:
+      tags:
+        - Items
+      description: Delete a single item object
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The unique identifier of the item
+      responses:
+        '204':
+          description: When successfully deleted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: { }
+        '404':
+          description: When the item object is not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+              example: { }
 components:
   schemas:
     Collection:
@@ -152,27 +481,32 @@ components:
         id:
           type: integer
           description: The collection unique identifier.
+          example: 1
         name:
           type: string
           description: The collection name.
+          example: Books
         owner:
           type: string
           description: The collection owner name.
+          example: Martijn
         logo:
           type: string
           description: The relative path of the logo.
+          example: /collections/books/assets/logo.png
         brandColor:
           type: string
-          description: The brand color hex code. Example #ff0088.
+          description: The brand color hex code.
+          example: "#ff0088"
     Category:
       type: object
       properties:
         id:
           type: integer
           description: The category unique identifier.
-        title:
+        name:
           type: string
-          description: The category title.
+          description: The category name.
         collectionId:
           type: integer
           description: The collection unique identifier this category belongs to.
@@ -185,9 +519,9 @@ components:
         id:
           type: integer
           description: The item unique identifier.
-        title:
+        name:
           type: string
-          description: The item title.
+          description: The item name.
         img:
           type: string
           description: The relative path of the image.

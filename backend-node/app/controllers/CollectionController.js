@@ -25,7 +25,7 @@ collections.show = async (req, res) => {
         return res.status(consts.HTTP_OK).json(collection.toJSON());
     }
 
-    return res.status(consts.HTTP_NOT_FOUND).json();
+    return res.status(consts.HTTP_NOT_FOUND).json({});
 };
 
 collections.update = async (req, res) => {
@@ -38,7 +38,7 @@ collections.update = async (req, res) => {
         return res.status(consts.HTTP_OK).json(collection.toJSON());
     }
 
-    return res.status(consts.HTTP_NOT_FOUND).json();
+    return res.status(consts.HTTP_NOT_FOUND).json({});
 };
 
 collections.destroy = async (req, res) => {

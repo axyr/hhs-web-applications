@@ -15,7 +15,7 @@ const router = {
         app.get('/collections/:collectionId/categories', categories.index);
         app.get('/collections/:collectionId/items', items.index);
 
-        app.post('/collections/:collectionId/categories', categories.create);
+        app.post('/categories', categories.create);
         app.get('/categories/:id', categories.show);
         app.patch('/categories/:id', categories.update);
         app.delete('/categories/:id', categories.destroy);

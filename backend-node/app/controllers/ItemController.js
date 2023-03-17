@@ -17,7 +17,7 @@ items.index = async (req, res) => {
         return res.status(consts.HTTP_OK).json(items);
     }
 
-    return res.status(consts.HTTP_NOT_FOUND).json();
+    return res.status(consts.HTTP_NOT_FOUND).json({});
 };
 
 items.create = async (req, res) => {
@@ -35,7 +35,7 @@ items.show = async (req, res) => {
         return res.status(consts.HTTP_OK).json(item.toJSON());
     }
 
-    return res.status(consts.HTTP_NOT_FOUND).json();
+    return res.status(consts.HTTP_NOT_FOUND).json({});
 };
 
 items.update = async (req, res) => {
@@ -49,7 +49,7 @@ items.update = async (req, res) => {
         return res.status(consts.HTTP_OK).json(item.toJSON());
     }
 
-    return res.status(consts.HTTP_NOT_FOUND).json();
+    return res.status(consts.HTTP_NOT_FOUND).json({});
 };
 
 items.destroy = async (req, res) => {
