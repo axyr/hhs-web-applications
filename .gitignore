@@ -1,3 +1,4 @@
 /backend-node/node_modules/
 /vuejs/node_modules/
 /gen/
+*.sqlite
