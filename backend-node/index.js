@@ -1,3 +1,5 @@
 const app = require('./bootstrap/app.js');
 
-app.start();
+const port = process.env.PORT || 3000;
+
+app.start(port);
