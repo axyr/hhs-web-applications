@@ -5,7 +5,11 @@ const db = require('../../app/models');
 describe('test /collections', () => {
 
     beforeAll(async () => {
-        await db.sequelize.sync({force: true});
+        try {
+            await db.sequelize.sync({force: true});
+        } catch (e) {
+            console.error(e);
+        }
     });
 
     it('Creates a collection', (done) => {
@@ -52,7 +56,7 @@ describe('test /collections', () => {
             .get('/collections/doesnotexist')
             .then((response) => {
                 expect(response.status).toBe(404);
-                expect(response.body).toStrictEqual('');
+                expect(response.body).toStrictEqual({});
             })
             .finally(() => {
                 done();

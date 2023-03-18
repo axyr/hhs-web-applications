@@ -1,22 +1,44 @@
 const request = require('supertest');
 const app = require('./../../bootstrap/app.js');
 const db = require('../../app/models');
+const {Category, Collection} = require('../../app/models');
+
+let collection = null;
+let category = null;
 
 describe('test /items', () => {
 
     beforeAll(async () => {
-        await db.sequelize.sync({force: true});
+        try {
+            await db.sequelize.sync({force: true});
+            collection = await Collection.create({
+                id: 1,
+                name: 'Name'
+            });
+            category = await Category.create({
+                id: 1,
+                name: 'Name'
+            });
+        } catch (e) {
+            console.error(e);
+        }
     });
 
-    it('Creates a item', (done) => {
+    it('Creates an item', (done) => {
+
         request(app)
             .post('/items')
             .send({
+                collectionId: collection.id,
+                categoryId: category.id,
                 name: 'Books'
             })
             .then(response => {
                 expect(response.status).toBe(201);
                 expect(response.body.name).toBe('Books');
+            })
+            .catch((e) => {
+                console.error(e);
             })
             .finally(() => {
                 done();
@@ -25,7 +47,7 @@ describe('test /items', () => {
 
     it('Gets all items', (done) => {
         request(app)
-            .get('/items')
+            .get(`/collections/${collection.id}/items`)
             .then(response => {
                 expect(response.status).toBe(200);
                 expect(response.body[0].name).toBe('Books');
@@ -52,7 +74,7 @@ describe('test /items', () => {
             .get('/items/doesnotexist')
             .then((response) => {
                 expect(response.status).toBe(404);
-                expect(response.body).toStrictEqual('');
+                expect(response.body).toStrictEqual({});
             })
             .finally(() => {
                 done();

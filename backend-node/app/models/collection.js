@@ -4,10 +4,12 @@ module.exports = (sequelize, DataTypes) => {
     class Collection extends Model {
         static associate(models) {
             models.Collection.hasMany(models.Item, {
-                as: 'items'
+                as: 'items',
+                foreignKey: 'id'
             });
             models.Collection.hasMany(models.Category, {
-                as: 'categories'
+                as: 'categories',
+                foreignKey: 'id'
             });
         }
     }

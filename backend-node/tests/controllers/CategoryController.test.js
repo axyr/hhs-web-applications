@@ -1,17 +1,30 @@
 const request = require('supertest');
 const app = require('./../../bootstrap/app.js');
 const db = require('../../app/models');
+const {Collection} = require('../../app/models');
+
+let collection = null;
 
 describe('test /categories', () => {
 
     beforeAll(async () => {
-        await db.sequelize.sync({force: true});
+        try {
+            await db.sequelize.sync({force: true});
+            collection = await Collection.create({
+                id: 1,
+                name: 'Name'
+            });
+        } catch (e) {
+            console.error(e);
+        }
     });
 
     it('Creates a category', (done) => {
+
         request(app)
             .post('/categories')
             .send({
+                collectionId: collection.id,
                 name: 'Books'
             })
             .then(response => {
@@ -25,7 +38,7 @@ describe('test /categories', () => {
 
     it('Gets all categories', (done) => {
         request(app)
-            .get('/categories')
+            .get(`/collections/${collection.id}/categories`)
             .then(response => {
                 expect(response.status).toBe(200);
                 expect(response.body[0].name).toBe('Books');
@@ -52,7 +65,7 @@ describe('test /categories', () => {
             .get('/categories/doesnotexist')
             .then((response) => {
                 expect(response.status).toBe(404);
-                expect(response.body).toStrictEqual('');
+                expect(response.body).toStrictEqual({});
             })
             .finally(() => {
                 done();
