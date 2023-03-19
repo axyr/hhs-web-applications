@@ -2,6 +2,7 @@ import {createApp} from 'vue/dist/vue.esm-bundler';
 import {createRouter, createWebHistory} from 'vue-router';
 import {createPinia} from 'pinia';
 import routes from './routes/routes.js';
+
 import './assets/app.css';
 
 const router = createRouter({
