@@ -17,8 +17,8 @@
   "production": {
     "username": "root",
     "password": null,
-    "database": ":memory:",
-    "host": "127.0.0.1",
+    "database": "database/database.sqlite",
+    "host": "database/database.sqlite",
     "dialect": "sqlite"
   }
 }
