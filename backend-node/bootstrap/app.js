@@ -25,7 +25,7 @@ app.use(routePrefix, router);
 
 // Start the app with a defined port
 app.start = (port) => {
-    port = port || 3000;
+    port = port || 8080;
 
     app.listen(port, () => console.log(`App listening on port ${port}`));
 };
