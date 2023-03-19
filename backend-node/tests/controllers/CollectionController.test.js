@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('./../../bootstrap/app.js');
 const db = require('../../app/models');
 
-describe('test /collections', () => {
+describe('test /api/v1/collections', () => {
 
     beforeAll(async () => {
         try {
@@ -14,7 +14,7 @@ describe('test /collections', () => {
 
     it('Creates a collection', (done) => {
         request(app)
-            .post('/collections')
+            .post('/api/v1/collections')
             .send({
                 name: 'Books'
             })
@@ -29,7 +29,7 @@ describe('test /collections', () => {
 
     it('Gets all collections', (done) => {
         request(app)
-            .get('/collections')
+            .get('/api/v1/collections')
             .then(response => {
                 expect(response.status).toBe(200);
                 expect(response.body[0].name).toBe('Books');
@@ -41,7 +41,7 @@ describe('test /collections', () => {
 
     it('Shows a collection', (done) => {
         request(app)
-            .get('/collections/1')
+            .get('/api/v1/collections/1')
             .then(response => {
                 expect(response.status).toBe(200);
                 expect(response.body.name).toBe('Books');
@@ -53,7 +53,7 @@ describe('test /collections', () => {
 
     it('Returns a 404 when collection is not found', (done) => {
         request(app)
-            .get('/collections/doesnotexist')
+            .get('/api/v1/collections/doesnotexist')
             .then((response) => {
                 expect(response.status).toBe(404);
                 expect(response.body).toStrictEqual({});
@@ -65,7 +65,7 @@ describe('test /collections', () => {
 
     it('Updates a collection', (done) => {
         request(app)
-            .patch('/collections/1')
+            .patch('/api/v1/collections/1')
             .send({
                 name: 'Pokemon'
             })
@@ -80,7 +80,7 @@ describe('test /collections', () => {
 
     it('Deletes a collection', (done) => {
         request(app)
-            .delete('/collections/1')
+            .delete('/api/v1/collections/1')
             .send()
             .then(response => {
                 expect(response.status).toBe(204);

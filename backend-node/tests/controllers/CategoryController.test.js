@@ -5,7 +5,7 @@ const {Collection} = require('../../app/models');
 
 let collection = null;
 
-describe('test /categories', () => {
+describe('test /api/v1/categories', () => {
 
     beforeAll(async () => {
         try {
@@ -22,7 +22,7 @@ describe('test /categories', () => {
     it('Creates a category', (done) => {
 
         request(app)
-            .post('/categories')
+            .post('/api/v1/categories')
             .send({
                 collectionId: collection.id,
                 name: 'Books'
@@ -38,7 +38,7 @@ describe('test /categories', () => {
 
     it('Gets all categories', (done) => {
         request(app)
-            .get(`/collections/${collection.id}/categories`)
+            .get(`/api/v1/collections/${collection.id}/categories`)
             .then(response => {
                 expect(response.status).toBe(200);
                 expect(response.body[0].name).toBe('Books');
@@ -50,7 +50,7 @@ describe('test /categories', () => {
 
     it('Shows a category', (done) => {
         request(app)
-            .get('/categories/1')
+            .get('/api/v1/categories/1')
             .then(response => {
                 expect(response.status).toBe(200);
                 expect(response.body.name).toBe('Books');
@@ -62,7 +62,7 @@ describe('test /categories', () => {
 
     it('Returns a 404 when category is not found', (done) => {
         request(app)
-            .get('/categories/doesnotexist')
+            .get('/api/v1/categories/doesnotexist')
             .then((response) => {
                 expect(response.status).toBe(404);
                 expect(response.body).toStrictEqual({});
@@ -74,7 +74,7 @@ describe('test /categories', () => {
 
     it('Updates a category', (done) => {
         request(app)
-            .patch('/categories/1')
+            .patch('/api/v1/categories/1')
             .send({
                 name: 'Pokemon'
             })
@@ -89,7 +89,7 @@ describe('test /categories', () => {
 
     it('Deletes a category', (done) => {
         request(app)
-            .delete('/categories/1')
+            .delete('/api/v1/categories/1')
             .send()
             .then(response => {
                 expect(response.status).toBe(204);
