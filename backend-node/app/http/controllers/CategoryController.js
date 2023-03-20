@@ -1,5 +1,6 @@
-const consts = require('../../framework/consts.js');
-const {Category, Collection} = require('../models');
+const consts = require('../../../framework/consts.js');
+const {Category, Collection} = require('../../models');
+const CategoryValidator = require('../validators/CategoryValidator.js');
 
 module.exports = {
     index: async (req, res) => {
@@ -13,6 +14,12 @@ module.exports = {
     },
 
     create: async (req, res) => {
+        const validator = new CategoryValidator(req);
+
+        if (await validator.fails()) {
+            return res.status(consts.HTTP_UNPROCESSABLE_ENTITY).json(validator.errors());
+        }
+
         const category = await Category.create(req.body);
 
         res.status(consts.HTTP_CREATED).json(category.toJSON());
@@ -29,6 +36,12 @@ module.exports = {
     },
 
     update: async (req, res) => {
+        const validator = new CategoryValidator(req);
+
+        if (await validator.fails()) {
+            return res.status(consts.HTTP_UNPROCESSABLE_ENTITY).json(validator.errors());
+        }
+        
         const category = await Category.findByPk(req.params.id);
 
         if (category) {

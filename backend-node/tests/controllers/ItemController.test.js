@@ -31,7 +31,8 @@ describe('test /api/v1/items', () => {
             .send({
                 collectionId: collection.id,
                 categoryId: category.id,
-                name: 'Books'
+                name: 'Books',
+                img: 'path/to/jpg',
             })
             .then(response => {
                 expect(response.status).toBe(201);
@@ -39,6 +40,22 @@ describe('test /api/v1/items', () => {
             })
             .catch((e) => {
                 console.error(e);
+            })
+            .finally(() => {
+                done();
+            });
+    });
+
+    it('Validation fails when creating an item', (done) => {
+        request(app)
+            .post('/api/v1/items')
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(422);
+                expect(response.body.errors.name).toBe('is required');
+                expect(response.body.errors.img).toBe('is required');
+                expect(response.body.errors.collectionId).toBe('must be an integer');
+                expect(response.body.errors.categoryId).toBe('must be an integer');
             })
             .finally(() => {
                 done();
@@ -85,7 +102,10 @@ describe('test /api/v1/items', () => {
         request(app)
             .patch('/api/v1/items/1')
             .send({
-                name: 'Pokemon'
+                collectionId: collection.id,
+                categoryId: category.id,
+                name: 'Pokemon',
+                img: 'path/to/jpg',
             })
             .then(response => {
                 expect(response.status).toBe(200);

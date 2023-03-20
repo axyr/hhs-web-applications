@@ -25,11 +25,25 @@ describe('test /api/v1/categories', () => {
             .post('/api/v1/categories')
             .send({
                 collectionId: collection.id,
-                name: 'Books'
+                name: 'Books',
             })
             .then(response => {
                 expect(response.status).toBe(201);
                 expect(response.body.name).toBe('Books');
+            })
+            .finally(() => {
+                done();
+            });
+    });
+
+    it('Validation fails when creating a category', (done) => {
+        request(app)
+            .post('/api/v1/categories')
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(422);
+                expect(response.body.errors.name).toBe('is required');
+                expect(response.body.errors.collectionId).toBe('must be an integer');
             })
             .finally(() => {
                 done();
@@ -76,11 +90,26 @@ describe('test /api/v1/categories', () => {
         request(app)
             .patch('/api/v1/categories/1')
             .send({
-                name: 'Pokemon'
+                name: 'Pokemon',
+                collectionId: 1,
             })
             .then(response => {
                 expect(response.status).toBe(200);
                 expect(response.body.name).toBe('Pokemon');
+            })
+            .finally(() => {
+                done();
+            });
+    });
+
+    it('Validation fails when updating a category', (done) => {
+        request(app)
+            .patch('/api/v1/categories/1')
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(422);
+                expect(response.body.errors.name).toBe('is required');
+                expect(response.body.errors.collectionId).toBe('must be an integer');
             })
             .finally(() => {
                 done();

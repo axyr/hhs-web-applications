@@ -4,9 +4,10 @@ const express = require('express');
 const cors = require('cors');
 const routes = require('./../app/routes/api.js');
 const router = express.Router();
-const app = express();
 
 const routePrefix = '/api/v1';
+
+const app = express();
 
 // Allow everyone to query the app
 app.use(cors());

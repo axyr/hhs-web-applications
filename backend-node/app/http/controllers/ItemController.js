@@ -1,5 +1,6 @@
-const consts = require('../../framework/consts.js');
-const {Item, Collection, Category} = require('../models');
+const consts = require('../../../framework/consts.js');
+const {Item, Collection, Category} = require('../../models');
+const ItemValidator = require('../validators/ItemValidator.js');
 
 module.exports = {
     index: async (req, res) => {
@@ -19,6 +20,12 @@ module.exports = {
     },
 
     create: async (req, res) => {
+        const validator = new ItemValidator(req);
+
+        if (await validator.fails()) {
+            return res.status(consts.HTTP_UNPROCESSABLE_ENTITY).json(validator.errors());
+        }
+
         const item = await Item.create(req.body);
 
         res.status(consts.HTTP_CREATED).json(item.toJSON());
@@ -35,6 +42,12 @@ module.exports = {
     },
 
     update: async (req, res) => {
+        const validator = new ItemValidator(req);
+
+        if (await validator.fails()) {
+            return res.status(consts.HTTP_UNPROCESSABLE_ENTITY).json(validator.errors());
+        }
+        
         const item = await Item.findByPk(req.params.id);
 
         if (item) {

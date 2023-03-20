@@ -1,6 +1,6 @@
-const collections = require('../controllers/CollectionController');
-const categories = require('../controllers/CategoryController');
-const items = require('../controllers/ItemController');
+const collections = require('../http/controllers/CollectionController');
+const categories = require('../http/controllers/CategoryController');
+const items = require('../http/controllers/ItemController');
 
 const routes = {
     init(router) {

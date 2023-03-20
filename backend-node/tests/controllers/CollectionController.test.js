@@ -16,11 +16,30 @@ describe('test /api/v1/collections', () => {
         request(app)
             .post('/api/v1/collections')
             .send({
-                name: 'Books'
+                name: 'Books',
+                owner: 'owner',
+                logo: 'logo',
+                brandColor: '#123456',
             })
             .then(response => {
                 expect(response.status).toBe(201);
                 expect(response.body.name).toBe('Books');
+            })
+            .finally(() => {
+                done();
+            });
+    });
+
+    it('Validation fails when creating a collection', (done) => {
+        request(app)
+            .post('/api/v1/collections')
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(422);
+                expect(response.body.errors.name).toBe('is required');
+                expect(response.body.errors.owner).toBe('is required');
+                expect(response.body.errors.logo).toBe('is required');
+                expect(response.body.errors.brandColor).toBe('is required');
             })
             .finally(() => {
                 done();
@@ -67,11 +86,27 @@ describe('test /api/v1/collections', () => {
         request(app)
             .patch('/api/v1/collections/1')
             .send({
-                name: 'Pokemon'
+                name: 'Pokemon',
+                owner: 'owner',
+                logo: 'logo',
+                brandColor: '#123456',
             })
             .then(response => {
                 expect(response.status).toBe(200);
                 expect(response.body.name).toBe('Pokemon');
+            })
+            .finally(() => {
+                done();
+            });
+    });
+
+    it('Validation fails when updating a collection', (done) => {
+        request(app)
+            .patch('/api/v1/collections/1')
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(422);
+                expect(response.body.errors.name).toBe('is required');
             })
             .finally(() => {
                 done();

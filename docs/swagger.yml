@@ -193,22 +193,17 @@ paths:
             schema:
               type: object
               properties:
-                owner:
-                  type: string
-                brandColor:
-                  type: string
                 name:
                   type: string
-                logo:
-                  type: string
+                collectionId:
+                  type: integer
             examples:
               '0':
                 value: |-
                   {
-                      "name": "Books",
-                      "owner": "Martijn van Nieuwenhoven",
-                      "logo": "/categories/books/assets/logo.png",
-                      "brandColor": "#0283ff"
+                      "name": "Blue",
+                      "collectionId": 1,
+                      "itemCount": 4,
                   }
       responses:
         '201':
@@ -260,22 +255,17 @@ paths:
             schema:
               type: object
               properties:
-                owner:
-                  type: string
-                brandColor:
-                  type: string
                 name:
                   type: string
-                logo:
-                  type: string
+                collectionId:
+                  type: integer
             examples:
               '0':
                 value: |-
                   {
-                      "name": "Cars",
-                      "owner": "Sarah van Nieuwenhoven",
-                      "logo": "/categories/books/assets/logo.png",
-                      "brandColor": "#0f453"
+                      "name": "Blue",
+                      "collectionId": 1,
+                      "itemCount": 4,
                   }
       responses:
         '200':
@@ -349,22 +339,22 @@ paths:
             schema:
               type: object
               properties:
-                owner:
-                  type: string
-                brandColor:
-                  type: string
                 name:
                   type: string
-                logo:
+                collectionId:
+                  type: integer
+                categoryId:
+                  type: integer
+                img:
                   type: string
             examples:
               '0':
                 value: |-
                   {
-                      "name": "Books",
-                      "owner": "Martijn van Nieuwenhoven",
-                      "logo": "/items/books/assets/logo.png",
-                      "brandColor": "#0283ff"
+                      "name": "A blue item",
+                      "collectionId": 1,
+                      "categoryId": 1,
+                      "img": "path/to/image.jpg",
                   }
       responses:
         '201':
@@ -416,22 +406,22 @@ paths:
             schema:
               type: object
               properties:
-                owner:
-                  type: string
-                brandColor:
-                  type: string
                 name:
                   type: string
-                logo:
+                collectionId:
+                  type: integer
+                categoryId:
+                  type: integer
+                img:
                   type: string
             examples:
               '0':
                 value: |-
                   {
-                      "name": "Cars",
-                      "owner": "Sarah van Nieuwenhoven",
-                      "logo": "/items/books/assets/logo.png",
-                      "brandColor": "#0f453"
+                      "name": "A blue item",
+                      "collectionId": 1,
+                      "categoryId": 1,
+                      "img": "path/to/image.jpg",
                   }
       responses:
         '200':
@@ -504,12 +494,12 @@ components:
         id:
           type: integer
           description: The category unique identifier.
-        name:
-          type: string
-          description: The category name.
         collectionId:
           type: integer
           description: The collection unique identifier this category belongs to.
+        name:
+          type: string
+          description: The category name.
         itemCount:
           type: integer
           description: The amount of items this category contains.
@@ -519,15 +509,15 @@ components:
         id:
           type: integer
           description: The item unique identifier.
-        name:
-          type: string
-          description: The item name.
-        img:
-          type: string
-          description: The relative path of the image.
         collectionId:
           type: integer
           description: The collection unique identifier this item belongs to.
         categoryId:
           type: integer
           description: The category unique identifier this item belongs to.
+        name:
+          type: string
+          description: The item name.
+        img:
+          type: string
+          description: The relative path of the image.
