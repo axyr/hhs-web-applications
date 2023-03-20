@@ -1,54 +1,49 @@
 const consts = require('../../framework/consts.js');
 const {Collection} = require('../models');
 
-const collections = {};
+module.exports = {
+    index: async (req, res) => {
+        const collections = await Collection.findAll({raw: true, nest: true});
 
-collections.index = async (req, res) => {
+        res.status(consts.HTTP_OK).json(collections);
+    },
 
-    const collections = await Collection.findAll({raw: true, nest: true});
+    create: async (req, res) => {
+        const collection = await Collection.create(req.body);
 
-    res.status(consts.HTTP_OK).json(collections);
-};
+        res.status(consts.HTTP_CREATED).json(collection.toJSON());
+    },
 
-collections.create = async (req, res) => {
+    show: async (req, res) => {
+        const collection = await Collection.findByPk(req.params.id);
 
-    const collection = await Collection.create(req.body);
+        if (collection) {
+            return res.status(consts.HTTP_OK).json(collection.toJSON());
+        }
 
-    res.status(consts.HTTP_CREATED).json(collection.toJSON());
-};
+        return res.status(consts.HTTP_NOT_FOUND).json({});
+    },
 
-collections.show = async (req, res) => {
+    update: async (req, res) => {
+        const collection = await Collection.findByPk(req.params.id);
 
-    const collection = await Collection.findByPk(req.params.id);
+        if (collection) {
+            await collection.update(req.body);
+            await collection.save();
+            await collection.reload();
+            return res.status(consts.HTTP_OK).json(collection.toJSON());
+        }
 
-    if (collection) {
-        return res.status(consts.HTTP_OK).json(collection.toJSON());
+        return res.status(consts.HTTP_NOT_FOUND).json({});
+    },
+
+    destroy: async (req, res) => {
+        const collection = await Collection.findByPk(req.params.id);
+
+        if (collection) {
+            await collection.destroy();
+        }
+
+        res.status(consts.HTTP_NO_CONTENT).json();
     }
-
-    return res.status(consts.HTTP_NOT_FOUND).json({});
 };
-
-collections.update = async (req, res) => {
-    const collection = await Collection.findByPk(req.params.id);
-
-    if (collection) {
-        await collection.update(req.body);
-        await collection.save();
-        await collection.reload();
-        return res.status(consts.HTTP_OK).json(collection.toJSON());
-    }
-
-    return res.status(consts.HTTP_NOT_FOUND).json({});
-};
-
-collections.destroy = async (req, res) => {
-    const collection = await Collection.findByPk(req.params.id);
-
-    if (collection) {
-        await collection.destroy();
-    }
-
-    res.status(consts.HTTP_NO_CONTENT).json();
-};
-
-module.exports = collections;

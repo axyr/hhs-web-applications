@@ -1,58 +1,53 @@
 const consts = require('../../framework/consts.js');
 const {Category, Collection} = require('../models');
 
-const categories = {};
+module.exports = {
+    index: async (req, res) => {
+        const collection = await Collection.findByPk(req.params.collectionId);
 
-categories.index = async (req, res) => {
+        if (collection) {
+            return res.status(consts.HTTP_OK).json(await collection.getCategories());
+        }
 
-    const collection = await Collection.findByPk(req.params.collectionId);
+        return res.status(consts.HTTP_NOT_FOUND).json({});
+    },
 
-    if (collection) {
-        return res.status(consts.HTTP_OK).json(await collection.getCategories());
+    create: async (req, res) => {
+        const category = await Category.create(req.body);
+
+        res.status(consts.HTTP_CREATED).json(category.toJSON());
+    },
+
+    show: async (req, res) => {
+        const category = await Category.findByPk(req.params.id);
+
+        if (category) {
+            return res.status(consts.HTTP_OK).json(category.toJSON());
+        }
+
+        return res.status(consts.HTTP_NOT_FOUND).json({});
+    },
+
+    update: async (req, res) => {
+        const category = await Category.findByPk(req.params.id);
+
+        if (category) {
+            await category.update(req.body);
+            await category.save();
+            await category.reload();
+            return res.status(consts.HTTP_OK).json(category.toJSON());
+        }
+
+        return res.status(consts.HTTP_NOT_FOUND).json({});
+    },
+
+    destroy: async (req, res) => {
+        const category = await Category.findByPk(req.params.id);
+
+        if (category) {
+            await category.destroy();
+        }
+
+        res.status(consts.HTTP_NO_CONTENT).json();
     }
-
-    return res.status(consts.HTTP_NOT_FOUND).json({});
 };
-
-categories.create = async (req, res) => {
-
-    const category = await Category.create(req.body);
-
-    res.status(consts.HTTP_CREATED).json(category.toJSON());
-};
-
-categories.show = async (req, res) => {
-
-    const category = await Category.findByPk(req.params.id);
-
-    if (category) {
-        return res.status(consts.HTTP_OK).json(category.toJSON());
-    }
-
-    return res.status(consts.HTTP_NOT_FOUND).json({});
-};
-
-categories.update = async (req, res) => {
-    const category = await Category.findByPk(req.params.id);
-
-    if (category) {
-        await category.update(req.body);
-        await category.save();
-        await category.reload();
-        return res.status(consts.HTTP_OK).json(category.toJSON());
-    }
-
-    return res.status(consts.HTTP_NOT_FOUND).json({});
-};
-
-categories.destroy = async (req, res) => {
-    const category = await Category.findByPk(req.params.id);
-
-    if (category) {
-        await category.destroy();
-    }
-
-    res.status(consts.HTTP_NO_CONTENT).json();
-};
-
-module.exports = categories;
