@@ -2,9 +2,13 @@ const collections = require('../http/controllers/CollectionController');
 const categories = require('../http/controllers/CategoryController');
 const items = require('../http/controllers/ItemController');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../../../docs/swagger.json');
+
 const routes = {
     init(router) {
-        router.get('/', (req, res) => res.json({title: 'Collection Manager'}));
+        router.use('/', swaggerUi.serve);
+        router.get('/', swaggerUi.setup(swaggerDocument));
 
         router.get('/collections', collections.index);
         router.post('/collections', collections.create);

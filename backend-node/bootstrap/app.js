@@ -3,6 +3,8 @@ require('./../framework/env.js');
 const express = require('express');
 const cors = require('cors');
 const routes = require('./../app/routes/api.js');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../../docs/swagger.json');
 const router = express.Router();
 
 const routePrefix = '/api/v1';
@@ -20,6 +22,11 @@ app.disable('x-powered-by');
 
 // Load all routes
 routes.init(router);
+
+// Redirect root to api root with docs
+app.get('/', function (req, res) {
+    res.redirect(routePrefix);
+});
 
 // Set api versioning
 app.use(routePrefix, router);

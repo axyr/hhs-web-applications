@@ -1,5 +1,9 @@
 # API Design
 
+Dit zijn de eerste 9 stappen die zijn doorlopen zoals tijdens de les besproken.
+
+Vanaf stap 10, is de api verder uitgewerkt in swagger.yml.
+
 ## API Ontwerp: stap 1
 
 Beschrijf de meta data:

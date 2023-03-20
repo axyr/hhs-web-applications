@@ -1,5 +1,5 @@
 const {check} = require('express-validator');
-const Validator = require('./Validator.js');
+const Validator = require('../../../framework/Validator.js');
 
 class CollectionValidator extends Validator {
     async rules() {
