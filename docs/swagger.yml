@@ -65,6 +65,20 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Collection'
+        '422':
+          description: When one or more parameters are invalid
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: {
+                  errors: {
+                    name: 'is required',
+                    owner: 'is required',
+                    logo: 'is required',
+                    brandColor: 'is required'
+                  }
+                }
   /collections/{id}:
     get:
       tags:
@@ -133,6 +147,20 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Collection'
+        '422':
+          description: When one or more parameters are invalid
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: {
+                  errors: {
+                    name: 'is required',
+                    owner: 'is required',
+                    logo: 'is required',
+                    brandColor: 'is required'
+                  }
+                }
         '404':
           description: When the collection object is not found
           content:
@@ -217,6 +245,18 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Category'
+        '422':
+          description: When one or more parameters are invalid
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: {
+                  errors: {
+                    name: 'is required',
+                    collectionId: 'must be an integer'
+                  }
+                }
   /categories/{id}:
     get:
       tags:
@@ -286,6 +326,18 @@ paths:
               schema:
                 type: object
                 example: { }
+        '422':
+          description: When one or more parameters are invalid
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: {
+                  errors: {
+                    name: 'is required',
+                    collectionId: 'must be an integer'
+                  }
+                }
     delete:
       tags:
         - Categories
@@ -369,6 +421,20 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/Item'
+        '422':
+          description: When one or more parameters are invalid
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: {
+                  errors: {
+                    name: 'is required',
+                    img: 'is required',
+                    collectionId: 'must be an integer',
+                    categoryId: 'must be an integer'
+                  }
+                }
   /items/{id}:
     get:
       tags:
@@ -444,6 +510,20 @@ paths:
               schema:
                 type: object
                 example: { }
+        '422':
+          description: When one or more parameters are invalid
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                example: {
+                  errors: {
+                    name: 'is required',
+                    img: 'is required',
+                    collectionId: 'must be an integer',
+                    categoryId: 'must be an integer'
+                  }
+                }
     delete:
       tags:
         - Items
