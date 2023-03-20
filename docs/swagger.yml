@@ -4,6 +4,9 @@ info:
   description: Manage collections with a breeze
   version: '0.1'
 servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/21162131/Collections-API/0.1
   - url: http://localhost:3000/api/v1
 tags:
   - name: Collections
@@ -36,6 +39,7 @@ paths:
           application/json:
             schema:
               type: object
+              required: [ name, owner, brandColor, logo ]
               properties:
                 owner:
                   type: string
@@ -103,6 +107,7 @@ paths:
           application/json:
             schema:
               type: object
+              required: [ name, owner, brandColor, logo ]
               properties:
                 owner:
                   type: string
@@ -116,10 +121,10 @@ paths:
               '0':
                 value: |-
                   {
-                      "name": "Cars",
-                      "owner": "Sarah van Nieuwenhoven",
+                      "name": "Books",
+                      "owner": "Martijn van Nieuwenhoven",
                       "logo": "/collections/books/assets/logo.png",
-                      "brandColor": "#0f453"
+                      "brandColor": "#0283ff"
                   }
       responses:
         '200':
@@ -192,6 +197,7 @@ paths:
           application/json:
             schema:
               type: object
+              required: [ name, collectionId ]
               properties:
                 name:
                   type: string
@@ -202,8 +208,7 @@ paths:
                 value: |-
                   {
                       "name": "Blue",
-                      "collectionId": 1,
-                      "itemCount": 4,
+                      "collectionId": 1
                   }
       responses:
         '201':
@@ -254,6 +259,7 @@ paths:
           application/json:
             schema:
               type: object
+              required: [ name, collectionId ]
               properties:
                 name:
                   type: string
@@ -264,8 +270,7 @@ paths:
                 value: |-
                   {
                       "name": "Blue",
-                      "collectionId": 1,
-                      "itemCount": 4,
+                      "collectionId": 1
                   }
       responses:
         '200':
@@ -338,6 +343,7 @@ paths:
           application/json:
             schema:
               type: object
+              required: [ name, collectionId, categoryId, img ]
               properties:
                 name:
                   type: string
@@ -354,7 +360,7 @@ paths:
                       "name": "A blue item",
                       "collectionId": 1,
                       "categoryId": 1,
-                      "img": "path/to/image.jpg",
+                      "img": "path/to/image.jpg"
                   }
       responses:
         '201':
@@ -405,6 +411,7 @@ paths:
           application/json:
             schema:
               type: object
+              required: [ name, collectionId, categoryId, img ]
               properties:
                 name:
                   type: string
@@ -421,7 +428,7 @@ paths:
                       "name": "A blue item",
                       "collectionId": 1,
                       "categoryId": 1,
-                      "img": "path/to/image.jpg",
+                      "img": "path/to/image.jpg"
                   }
       responses:
         '200':
