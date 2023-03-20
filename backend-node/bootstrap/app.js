@@ -5,6 +5,7 @@ const cors = require('cors');
 const routes = require('./../app/routes/api.js');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../../docs/swagger.json');
+const consts = require('../framework/consts');
 const router = express.Router();
 
 const routePrefix = '/api/v1';
@@ -30,6 +31,10 @@ app.get('/', function (req, res) {
 
 // Set api versioning
 app.use(routePrefix, router);
+
+app.get('*', function (req, res) {
+    res.status(consts.HTTP_NOT_FOUND).send('404 Not found');
+});
 
 // Start the app with a defined port
 app.start = (port) => {
