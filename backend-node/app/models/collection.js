@@ -5,11 +5,11 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             models.Collection.hasMany(models.Item, {
                 as: 'items',
-                foreignKey: 'id'
+                foreignKey: 'collectionId'
             });
             models.Collection.hasMany(models.Category, {
                 as: 'categories',
-                foreignKey: 'id'
+                foreignKey: 'collectionId'
             });
         }
     }
