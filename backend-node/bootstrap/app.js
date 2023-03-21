@@ -3,8 +3,6 @@ require('./../framework/env.js');
 const express = require('express');
 const cors = require('cors');
 const routes = require('./../app/routes/api.js');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('../../docs/swagger.json');
 const consts = require('../framework/consts');
 const router = express.Router();
 
