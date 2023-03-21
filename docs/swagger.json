@@ -7,11 +7,16 @@
   },
   "servers": [
     {
+      "url": "https://collections-backend.azurewebsites.net/api/v1/",
+      "description": "Live server"
+    },
+    {
       "url": "https://virtserver.swaggerhub.com/21162131/Collections-API/0.1",
       "description": "SwaggerHub API Auto Mocking"
     },
     {
-      "url": "http://localhost:3000/api/v1"
+      "url": "http://localhost:3000/api/v1",
+      "description": "localhost testing"
     }
   ],
   "tags": [

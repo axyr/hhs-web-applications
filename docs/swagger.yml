@@ -5,9 +5,12 @@ info:
   version: '0.1'
 servers:
   # Added by API Auto Mocking Plugin
+  - description: Live website
+    url: https://collections-backend.azurewebsites.net/api/v1/
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/21162131/Collections-API/0.1
-  - url: http://localhost:3000/api/v1
+  - description: localhost testing
+    url: http://localhost:3000/api/v1
 tags:
   - name: Collections
     description: Operations for managing collections
